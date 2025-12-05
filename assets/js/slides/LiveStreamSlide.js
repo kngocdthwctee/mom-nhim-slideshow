@@ -131,6 +131,10 @@ class LiveStreamSlide extends BaseSlide {
         const ctx = this.ctx;
         const scale = Math.min(this.width, this.height) / 800;
 
+        // Mobile font multiplier - increase font size on small screens
+        const isMobile = this.width < 600;
+        const fontScale = isMobile ? Math.max(scale * 2, 1) : scale;
+
         if (this.slideStartTime === 0) this.slideStartTime = timestamp;
 
         const elapsed = timestamp - this.slideStartTime;
@@ -155,8 +159,8 @@ class LiveStreamSlide extends BaseSlide {
             this.drawGiftEffect(ctx, scale);
         } else {
             this.drawLivestreamVideo(ctx, scale);
-            this.drawLiveBadge(ctx, timestamp, scale);
-            this.drawCommentBox(ctx, timestamp, scale);
+            this.drawLiveBadge(ctx, timestamp, fontScale);
+            this.drawCommentBox(ctx, timestamp, fontScale);
         }
     }
 
