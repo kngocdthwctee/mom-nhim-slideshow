@@ -174,14 +174,14 @@ class LiveStreamSlide extends BaseSlide {
         ctx.shadowColor = 'rgba(255, 0, 0, 0.5)';
         ctx.shadowBlur = 12 * scale;
         ctx.beginPath();
-        ctx.roundRect(x, y, 65 * scale, 24 * scale, 4 * scale);
+        ctx.roundRect(x, y, 55 * scale, 20 * scale, 4 * scale);
         ctx.fill();
         ctx.shadowBlur = 0;
 
         ctx.fillStyle = '#fff';
         ctx.font = `bold ${11 * scale}px Arial`;
         ctx.textAlign = 'center';
-        ctx.fillText('LIVE', x + 32.5 * scale, y + 16 * scale);
+        ctx.fillText('LIVE', x + 27.5 * scale, y + 14 * scale);
 
         ctx.font = `${10 * scale}px Arial`;
         ctx.textAlign = 'left';
