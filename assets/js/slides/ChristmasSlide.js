@@ -31,7 +31,7 @@ class Slide4 extends BaseSlide {
         super.initBase(canvas, ctx);
 
         // Load tree image
-        this.treeImage.src = 'public/trees/candy-tree.png';
+        this.treeImage.src = 'assets/images/trees/candy-tree.png';
 
         this.initOrnaments();
         this.initLights();

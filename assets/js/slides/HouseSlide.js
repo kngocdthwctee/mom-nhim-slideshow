@@ -27,7 +27,7 @@ class Slide1 extends BaseSlide {
         super.initBase(canvas, ctx);
 
         // Load house image
-        this.houseImage.src = 'public/house/house3.png';
+        this.houseImage.src = 'assets/images/house/house3.png';
 
         this.initHouses();
     }

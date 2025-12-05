@@ -37,12 +37,12 @@ class Slide2 extends BaseSlide {
         super.initBase(canvas, ctx);
 
         // Load images
-        this.images.cayoi.src = 'public/garden/cayoi.png';
-        this.images.cayxoai.src = 'public/garden/cayxoai.png';
-        this.images.caymit.src = 'public/garden/caymit.png';
-        this.images.caysaurieng.src = 'public/garden/caysaurieng.png';
-        this.images.caychuoi.src = 'public/garden/caychuoi.png';
-        this.images.caycam.src = 'public/garden/caycam.png';
+        this.images.cayoi.src = 'assets/images/garden/cayoi.png';
+        this.images.cayxoai.src = 'assets/images/garden/cayxoai.png';
+        this.images.caymit.src = 'assets/images/garden/caymit.png';
+        this.images.caysaurieng.src = 'assets/images/garden/caysaurieng.png';
+        this.images.caychuoi.src = 'assets/images/garden/caychuoi.png';
+        this.images.caycam.src = 'assets/images/garden/caycam.png';
 
         this.initTrees();
     }

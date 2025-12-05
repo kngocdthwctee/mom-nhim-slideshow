@@ -35,7 +35,7 @@ class LiveStreamSlide extends BaseSlide {
 
     initGiftVideo() {
         this.giftVideo = document.createElement('video');
-        this.giftVideo.src = 'public/video/tiktokuniverse.mp4';
+        this.giftVideo.src = 'assets/images/videos/tiktokuniverse.mp4';
         this.giftVideo.style.display = 'none';
         this.giftVideo.muted = false;
         this.giftVideo.loop = false;
@@ -55,7 +55,7 @@ class LiveStreamSlide extends BaseSlide {
 
     initLivestreamVideo() {
         this.livestreamVideo = document.createElement('video');
-        this.livestreamVideo.src = 'public/video/livestream.mp4';
+        this.livestreamVideo.src = 'assets/images/videos/livestream.mp4';
         this.livestreamVideo.style.display = 'none';
         this.livestreamVideo.muted = false;
         this.livestreamVideo.volume = 0.7;
@@ -66,7 +66,7 @@ class LiveStreamSlide extends BaseSlide {
 
     initGiftAudio() {
         this.giftAudio = document.createElement('audio');
-        this.giftAudio.src = 'public/audio/gift-sound.mp3';
+        this.giftAudio.src = 'assets/images/audio/gift-sound.mp3';
         this.giftAudio.style.display = 'none';
         this.giftAudio.volume = 0.5;
         document.body.appendChild(this.giftAudio);
