@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mom Nhím - Giáng Sinh Huyền Bí</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Quicksand:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <!-- Background layers -->
+    <div class="background-layer"></div>
+    <div class="overlay"></div>
+
+    <!-- Snowflakes container -->
+    <div class="snowflakes" id="snowflakes"></div>
+
+    <!-- Main content -->
+    <main class="main-container">
+        <div class="slideshow-wrapper">
+            <div class="content-layout">
+                <!-- Left: Title + Canvas -->
+                <div class="left-section">
+                    <h1 class="slide-title" id="slideTitle">
+                        <span class="slide-number">Slide 1/4</span>
+                        Ngôi nhà của Mom Nhím
+                    </h1>
+                    <div class="canvas-container" id="canvasContainer">
+                        <!-- Canvas sẽ được inject vào đây -->
+                    </div>
+                </div>
+
+                <!-- Right: Content + Button -->
+                <div class="right-section">
+                    <div class="content-box" id="contentBox">
+                        <!-- Nội dung slide sẽ được inject vào đây -->
+                    </div>
+                    <button class="next-btn" id="nextBtn">
+                        <span class="btn-text">Tiếp theo</span>
+                        <span class="btn-icon">→</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="js/SlideManager.js"></script>
+    <script src="js/BaseSlide.js"></script>
+    <script src="js/slides/HouseSlide.js"></script>
+    <script src="js/slides/GardenSlide.js"></script>
+    <script src="js/slides/LivestockSlide.js"></script>
+    <script src="js/slides/LiveStreamSlide.js"></script>
+    <script src="js/slides/ChristmasSlide.js"></script>
+    <script src="js/effects.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>

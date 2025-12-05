@@ -1,0 +1,492 @@
+/* ============================
+   CSS Variables & Reset - Hello Kitty Theme
+   ============================ */
+:root {
+    --pink-dark: #e91e63;
+    --pink-main: #ff6b9d;
+    --pink-light: #ffb6c1;
+    --pink-pale: #ffe4ec;
+    --pink-bg: #fff0f5;
+    --white: #ffffff;
+    --red-bow: #e53935;
+    --text-dark: #5d4037;
+    --text-light: #fff;
+    --shadow-pink: rgba(233, 30, 99, 0.3);
+    --gradient-cute: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fdfbfb 100%);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Quicksand', sans-serif;
+    background-color: var(--pink-bg);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* ============================
+   Background Layers
+   ============================ */
+.background-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    background-image: url('../public/bg-pc.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+@media (max-width: 768px) {
+    .background-layer {
+        background-image: url('../public/bg-mobile.jpg');
+    }
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: linear-gradient(135deg,
+            rgba(255, 182, 193, 0.7) 0%,
+            rgba(255, 105, 180, 0.4) 50%,
+            rgba(255, 240, 245, 0.6) 100%);
+}
+
+/* ============================
+   Snowflakes Effect (Hearts & Stars)
+   ============================ */
+.snowflakes {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.snowflake {
+    position: absolute;
+    color: var(--pink-main);
+    font-size: 1rem;
+    animation: fall linear infinite;
+    text-shadow: 0 0 5px rgba(255, 105, 180, 0.5);
+}
+
+@keyframes fall {
+    0% {
+        transform: translateY(-10vh) rotate(0deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(110vh) rotate(360deg);
+        opacity: 0.3;
+    }
+}
+
+/* ============================
+   Main Container
+   ============================ */
+.main-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+}
+
+.slideshow-wrapper {
+    width: 100%;
+    max-width: 1800px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 30px;
+    border: 4px solid var(--pink-main);
+    box-shadow:
+        0 10px 40px var(--shadow-pink),
+        0 0 0 8px rgba(255, 182, 193, 0.3),
+        inset 0 0 30px rgba(255, 182, 193, 0.2);
+    padding: 25px;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+}
+
+.slideshow-wrapper::before {
+    content: '🎀';
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2.5rem;
+    z-index: 10;
+}
+
+.slideshow-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg,
+            var(--pink-light) 0%,
+            var(--pink-main) 25%,
+            var(--pink-light) 50%,
+            var(--pink-main) 75%,
+            var(--pink-light) 100%);
+    border-radius: 30px 30px 0 0;
+}
+
+/* ============================
+   Content Layout - Responsive
+   ============================ */
+.content-layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+@media (max-width: 900px) {
+    .content-layout {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .slideshow-wrapper {
+        padding: 15px;
+        border-radius: 20px;
+        border-width: 3px;
+    }
+
+    .slideshow-wrapper::before {
+        font-size: 2rem;
+    }
+}
+
+/* ============================
+   Left Section
+   ============================ */
+.left-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.slide-title {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--pink-dark);
+    padding: 15px 20px;
+    background: linear-gradient(90deg,
+            rgba(255, 182, 193, 0.4) 0%,
+            rgba(255, 182, 193, 0.1) 100%);
+    border-left: 5px solid var(--pink-main);
+    border-radius: 0 20px 20px 0;
+    position: relative;
+}
+
+.slide-title::after {
+    content: '✨';
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+}
+
+.slide-title .slide-number {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--pink-main);
+    display: block;
+    margin-bottom: 5px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+@media (max-width: 480px) {
+    .slide-title {
+        font-size: 1.1rem;
+        padding: 12px 15px;
+    }
+
+    .slide-title .slide-number {
+        font-size: 0.65rem;
+    }
+}
+
+/* ============================
+   Canvas Container
+   ============================ */
+.canvas-container {
+    background: linear-gradient(145deg, #fff5f8 0%, #ffe4ec 100%);
+    border-radius: 20px;
+    border: 3px solid var(--pink-light);
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+    position: relative;
+    box-shadow: inset 0 2px 10px rgba(233, 30, 99, 0.1);
+}
+
+.canvas-container canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+@media (max-width: 480px) {
+    .canvas-container {
+        aspect-ratio: 4 / 3;
+        border-radius: 15px;
+        border-width: 2px;
+    }
+}
+
+/* ============================
+   Right Section
+   ============================ */
+.right-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.content-box {
+    flex: 1;
+    background: linear-gradient(145deg, #fff 0%, var(--pink-pale) 100%);
+    border-radius: 20px;
+    border: 2px solid var(--pink-light);
+    padding: 20px;
+    color: var(--text-dark);
+    font-size: 1.2rem;
+    line-height: 1.8;
+    overflow-y: auto;
+    line-height: 1.8;
+    overflow-y: auto;
+    /* max-height: 350px; Removed to allow full height alignment */
+    box-shadow: inset 0 2px 10px rgba(255, 182, 193, 0.3);
+}
+
+.content-box::-webkit-scrollbar {
+    width: 8px;
+}
+
+.content-box::-webkit-scrollbar-track {
+    background: var(--pink-pale);
+    border-radius: 10px;
+}
+
+.content-box::-webkit-scrollbar-thumb {
+    background: var(--pink-light);
+    border-radius: 10px;
+}
+
+.content-box::-webkit-scrollbar-thumb:hover {
+    background: var(--pink-main);
+}
+
+.content-box p {
+    margin-bottom: 12px;
+}
+
+.content-box p:last-child {
+    margin-bottom: 0;
+}
+
+.content-box .highlight {
+    color: var(--pink-dark);
+    font-weight: 700;
+    background: linear-gradient(120deg, transparent 0%, rgba(255, 182, 193, 0.4) 50%, transparent 100%);
+    padding: 0 5px;
+    border-radius: 5px;
+}
+
+.content-box .character {
+    color: var(--red-bow);
+    font-weight: 600;
+    font-style: italic;
+}
+
+.content-box ul {
+    list-style: none;
+    margin: 10px 0;
+    padding-left: 10px;
+}
+
+.content-box ul li {
+    position: relative;
+    padding-left: 25px;
+    margin-bottom: 8px;
+}
+
+.content-box ul li::before {
+    content: '🌸';
+    position: absolute;
+    left: 0;
+    font-size: 0.85rem;
+}
+
+@media (max-width: 900px) {
+    .content-box {
+        max-height: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    .content-box {
+        padding: 15px;
+        font-size: 0.85rem;
+        max-height: 180px;
+        border-radius: 15px;
+    }
+}
+
+/* ============================
+   Next Button - Kawaii Style
+   ============================ */
+.next-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px 25px;
+    background: linear-gradient(135deg, var(--pink-main) 0%, var(--pink-dark) 100%);
+    border: 3px solid var(--white);
+    border-radius: 50px;
+    color: var(--white);
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow:
+        0 5px 20px var(--shadow-pink),
+        inset 0 -3px 0 rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.next-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.next-btn:hover::before {
+    left: 100%;
+}
+
+.next-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow:
+        0 8px 25px var(--shadow-pink),
+        0 0 20px rgba(255, 105, 180, 0.4);
+}
+
+.next-btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.btn-icon {
+    font-size: 1.3rem;
+    transition: transform 0.3s ease;
+}
+
+.next-btn:hover .btn-icon {
+    transform: translateX(5px);
+}
+
+@media (max-width: 480px) {
+    .next-btn {
+        padding: 12px 20px;
+        font-size: 0.9rem;
+        border-radius: 40px;
+    }
+}
+
+/* ============================
+   Animations
+   ============================ */
+.fade-in {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.fade-out {
+    animation: fadeOut 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(-15px);
+    }
+}
+
+/* ============================
+   Decorative Elements
+   ============================ */
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes sparkle {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: scale(0.8);
+    }
+}
