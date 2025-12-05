@@ -165,27 +165,27 @@ class LiveStreamSlide extends BaseSlide {
     }
 
     drawLiveBadge(ctx, timestamp, scale) {
-        const x = 30 * scale;
-        const y = 30 * scale;
+        const x = 20 * scale;
+        const y = 20 * scale;
         const pulse = Math.sin(timestamp / 300) * 0.3 + 0.7;
 
         ctx.save();
         ctx.fillStyle = `rgba(255, 0, 0, ${pulse})`;
         ctx.shadowColor = 'rgba(255, 0, 0, 0.5)';
-        ctx.shadowBlur = 15 * scale;
+        ctx.shadowBlur = 12 * scale;
         ctx.beginPath();
-        ctx.roundRect(x, y, 80 * scale, 30 * scale, 5 * scale);
+        ctx.roundRect(x, y, 65 * scale, 24 * scale, 4 * scale);
         ctx.fill();
         ctx.shadowBlur = 0;
 
         ctx.fillStyle = '#fff';
-        ctx.font = `bold ${14 * scale}px Arial`;
+        ctx.font = `bold ${11 * scale}px Arial`;
         ctx.textAlign = 'center';
-        ctx.fillText('LIVE', x + 40 * scale, y + 20 * scale);
+        ctx.fillText('LIVE', x + 32.5 * scale, y + 16 * scale);
 
-        ctx.font = `${12 * scale}px Arial`;
+        ctx.font = `${10 * scale}px Arial`;
         ctx.textAlign = 'left';
-        ctx.fillText(`👁️ ${this.viewerCount} watching`, x, y + 50 * scale);
+        ctx.fillText(`👁️ ${this.viewerCount}`, x, y + 40 * scale);
         ctx.restore();
     }
 
@@ -218,9 +218,14 @@ class LiveStreamSlide extends BaseSlide {
     }
 
     drawCommentBox(ctx, timestamp, scale) {
-        const x = this.width * 0.65;
+        // Mobile gets wider comment box
+        const isMobile = this.width < 600;
+        const boxWidth = isMobile ? 0.4 : 0.3;
+        const boxX = isMobile ? 0.58 : 0.65;
+
+        const x = this.width * boxX;
         const y = this.height * 0.15;
-        const w = this.width * 0.3;
+        const w = this.width * boxWidth;
         const h = this.height * 0.7;
 
         ctx.save();
@@ -233,33 +238,33 @@ class LiveStreamSlide extends BaseSlide {
         ctx.stroke();
 
         ctx.fillStyle = '#222';
-        ctx.fillRect(x, y, w, 40 * scale);
+        ctx.fillRect(x, y, w, 35 * scale);
         ctx.fillStyle = '#fff';
-        ctx.font = `bold ${14 * scale}px Arial`;
+        ctx.font = `bold ${13 * scale}px Arial`;
         ctx.textAlign = 'left';
-        ctx.fillText('💬 Chat', x + 15 * scale, y + 25 * scale);
+        ctx.fillText('💬 Chat', x + 12 * scale, y + 22 * scale);
 
-        const startY = y + 60 * scale;
-        const cHeight = 50 * scale;
+        const startY = y + 45 * scale;
+        const cHeight = 36 * scale; // Reduced from 50
         const highlight = this.showReactions ? Math.sin(timestamp / 200) * 0.3 + 0.7 : 1;
 
         this.comments.forEach((c, i) => {
             const yPos = startY + (i * cHeight);
-            if (yPos >= y + h - 20 * scale) return;
+            if (yPos >= y + h - 15 * scale) return;
 
             ctx.fillStyle = '#aaa';
-            ctx.font = `bold ${10 * scale}px Arial`;
-            ctx.fillText(c.username, x + 15 * scale, yPos);
+            ctx.font = `bold ${9 * scale}px Arial`;
+            ctx.fillText(c.username, x + 12 * scale, yPos);
 
             const isReact = i < 8 && this.showReactions;
             ctx.fillStyle = isReact ? `rgba(255, 215, 0, ${0.3 * highlight})` : 'rgba(255, 255, 255, 0.1)';
             ctx.beginPath();
-            ctx.roundRect(x + 15 * scale, yPos + 5 * scale, w - 30 * scale, 30 * scale, 5 * scale);
+            ctx.roundRect(x + 12 * scale, yPos + 3 * scale, w - 24 * scale, 24 * scale, 4 * scale);
             ctx.fill();
 
             ctx.fillStyle = '#fff';
-            ctx.font = `${11 * scale}px Arial`;
-            ctx.fillText(c.text, x + 25 * scale, yPos + 22 * scale);
+            ctx.font = `${10 * scale}px Arial`;
+            ctx.fillText(c.text, x + 18 * scale, yPos + 18 * scale);
         });
 
         ctx.restore();
