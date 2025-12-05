@@ -59,7 +59,7 @@ class LiveStreamSlide extends BaseSlide {
         this.livestreamVideo.style.display = 'none';
         this.livestreamVideo.muted = false;
         this.livestreamVideo.volume = 0.7;
-        this.livestreamVideo.loop = true;
+        this.livestreamVideo.loop = false;
         document.body.appendChild(this.livestreamVideo);
         this.livestreamVideo.play();
     }
@@ -73,24 +73,38 @@ class LiveStreamSlide extends BaseSlide {
     }
 
     initComments() {
-        this.comments = [
-            { text: "❤️ Mom giỏi quá!", username: "Fan1" },
-            { text: "👍 Yêu Mom!", username: "Fan2" },
-            { text: "😍 Khi nào livestream tiếp?", username: "Fan3" },
-            { text: "🎉 Chúc mừng Mom!", username: "Fan4" }
+        this.comments = [];
+        const commentList = [
+            { text: "Hi mum", username: "Pun", startTime: 500 },
+            { text: "Hê lô mom", username: "qn", startTime: 600 },
+            { text: "Hê lô nhím", username: "Ong", startTime: 1500 },
+            { text: "@qn hí iuuu", username: "Pun", startTime: 3000 },
+            { text: "@Pun hí iuu", username: "qn", startTime: 4000 },
+            { text: "Đã tặng x10 Bông hồng", username: "qn", startTime: 13000 },
+            { text: "Quà huyền bí bay quá tr lun kìa mum", username: "qn", startTime: 25000 }
         ];
+
+        this.commentTimeouts = [];
+        commentList.forEach((comment) => {
+            const timeout = setTimeout(() => {
+                this.comments.unshift(comment);
+                if (this.comments.length > 12) this.comments.pop();
+            }, comment.startTime);
+            this.commentTimeouts.push(timeout);
+        });
     }
 
     addGiftReactions() {
         const reactions = [
-            { text: "🎁 WOW QUÀ KHỦNG!", username: "Fan5" },
-            { text: "😱 OMG Universe!!", username: "Fan6" },
-            { text: "💎 Quá đẹp luôn!", username: "Fan7" },
-            { text: "🌟 Chúc mừng Mom!", username: "Fan8" },
-            { text: "🔥 Xứng đáng quá!", username: "Fan9" },
-            { text: "👏 Ngạc nhiên quá!", username: "Fan10" },
-            { text: "💖 Yêu Mom nhất!", username: "Fan11" },
-            { text: "✨ Quá tuyệt vời!", username: "Fan12" }
+            { text: "Adu vuýp!", username: "chịTom" },
+            { text: "Auuu", username: "Dòi" },
+            { text: "Adu adu", username: "Lez" },
+            { text: "Troi oiiiiii", username: "Louis" },
+            { text: "Adduuuu", username: "Pun" },
+            { text: "U ni vơ", username: "Pun" },
+            { text: "Aduuuu uniiiii", username: "qn" },
+            { text: "Giàu dữ tr", username: "vandung" },
+            { text: "Aduuuu, uni", username: "XuanThanh" }
         ];
 
         reactions.forEach((r, i) => {
@@ -138,7 +152,7 @@ class LiveStreamSlide extends BaseSlide {
         if (this.slideStartTime === 0) this.slideStartTime = timestamp;
 
         const elapsed = timestamp - this.slideStartTime;
-        if (elapsed > 5000 && !this.giftEffectTriggered) {
+        if (elapsed > 160000 && !this.giftEffectTriggered) {
             this.giftEffectTriggered = true;
             this.showGiftEffect = true;
             this.giftViewerBoost = true;
@@ -345,6 +359,11 @@ class LiveStreamSlide extends BaseSlide {
         this.lastViewerUpdate = 0;
         this.giftViewerBoost = false;
         this.giftBoostStartTime = 0;
+
+        if (this.commentTimeouts) {
+            this.commentTimeouts.forEach(timeout => clearTimeout(timeout));
+            this.commentTimeouts = [];
+        }
 
         if (this.giftVideo) {
             this.giftVideo.pause();
