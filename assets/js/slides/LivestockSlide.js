@@ -88,21 +88,27 @@ class Slide3 extends BaseSlide {
         this.animals = [];
         const scale = Math.min(this.width, this.height) / 800;
 
-        // Set camera limits
-        this.maxCameraOffset = 400 * scale;
+        // Set camera limits (Expanded map size)
+        this.maxCameraOffset = 2500 * scale; // Increased from 400 to 2500
 
         const groundY = this.height - 100 * scale;
 
         const animalTypes = ['conga', 'conlon', 'conbo', 'contrau'];
-        const numAnimals = 10;
-        const baseSpacing = this.width / numAnimals;
+
+        // Increase number of animals for larger map
+        const numAnimals = 20;
+
+        // Distribute animals across the entire extended map width
+        const totalWidth = this.width + this.maxCameraOffset * 2;
+        const startX = -this.maxCameraOffset;
 
         for (let i = 0; i < numAnimals; i++) {
             const type = animalTypes[i % animalTypes.length];
+            const baseSpacing = totalWidth / numAnimals;
 
             // Add jitter to X but ensure minimal spacing
-            const jitter = (Math.random() - 0.5) * (baseSpacing * 0.3);
-            const x = (i * baseSpacing) + jitter;
+            const jitter = (Math.random() - 0.5) * (baseSpacing * 0.4);
+            const x = startX + (i * baseSpacing) + jitter + baseSpacing / 2;
 
             const yOffset = (Math.random() * 150 - 75) * scale;
             const size = (80 + Math.random() * 20) * scale;

@@ -93,18 +93,24 @@ class Slide2 extends BaseSlide {
         this.trees = [];
         const scale = Math.min(this.width, this.height) / 800;
 
-        // Set camera limits
-        this.maxCameraOffset = 400 * scale;
+        // Set camera limits (Expanded map size)
+        this.maxCameraOffset = 2500 * scale; // Increased from 400 to 2500
 
         const groundY = this.height - 100 * scale;
         const treeTypes = ['caymit', 'cayxoai', 'caysaurieng', 'cayoi', 'caychuoi', 'caycam'];
-        const numTrees = 8;
+
+        // Increase number of trees for larger map
+        const numTrees = 20;
+
+        // Distribute trees across the entire extended map width
+        const totalWidth = this.width + this.maxCameraOffset * 2;
+        const startX = -this.maxCameraOffset;
 
         for (let i = 0; i < numTrees; i++) {
             const type = treeTypes[i % treeTypes.length];
-            const baseSpacing = this.width / numTrees;
-            const jitter = (Math.random() - 0.5) * (baseSpacing * 0.3);
-            const x = (i * baseSpacing) + jitter;
+            const baseSpacing = totalWidth / numTrees;
+            const jitter = (Math.random() - 0.5) * (baseSpacing * 0.4);
+            const x = startX + (i * baseSpacing) + jitter + baseSpacing / 2;
             const yOffset = (Math.random() * 200 - 100) * scale;
             const size = (150 + Math.random() * 20) * scale;
             const flip = Math.random() > 0.5;
@@ -112,8 +118,6 @@ class Slide2 extends BaseSlide {
             // Create Tree object
             this.trees.push(new Tree(x, groundY + yOffset, size, type, this.images, flip));
         }
-
-        // No need to sort here, will sort with characters together
     }
 
     loadCharacterImages() {
