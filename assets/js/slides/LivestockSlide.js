@@ -104,16 +104,31 @@ class Slide3 extends BaseSlide {
         const groundY = this.height - 100 * scale;
         const charSize = 120 * scale;
         const numChars = this.characterNames.length;
-        const baseSpacing = this.width * 2.5 / numChars;
-        const offsetX = -100 * scale; // Shift all characters to the left
+        // Define visible camera range
+        const cameraMinX = -this.maxCameraOffset;
+        const cameraMaxX = this.width + this.maxCameraOffset;
+        const visibleWidth = cameraMaxX - cameraMinX;
+
+        // Add margins to prevent characters from being cut off
+        const margin = charSize;
+        const usableWidth = visibleWidth - margin * 2;
+        const baseSpacing = usableWidth / (numChars - 1);
 
         this.characterNames.forEach((name, i) => {
-            const baseX = (i * baseSpacing) + (Math.random() - 0.5) * baseSpacing * 0.7 + offsetX;
+            // Distribute within visible camera range
+            const baseX = cameraMinX + margin + (i * baseSpacing);
+
+            // Add jitter within safe bounds
+            const jitterRange = Math.min(baseSpacing * 0.3, 30 * scale);
+            const jitter = (Math.random() - 0.5) * jitterRange * 2;
+            const finalX = baseX + jitter;
+
+
             const yOffset = (Math.random() * 200 - 100) * scale;
 
             // Create Character object
             const image = this.characterImages[i];
-            this.characters.push(new Character(baseX, groundY + yOffset, charSize, image, name));
+            this.characters.push(new Character(finalX, groundY + yOffset, charSize, image, name));
         });
 
         // No need to sort here, will sort with animals together
