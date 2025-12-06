@@ -7,11 +7,13 @@ class GameObject {
      * @param {number} x - X position
      * @param {number} y - Y position (bottom position for depth sorting)
      * @param {number} size - Object size
+     * @param {Image} image - Object image (optional)
      */
-    constructor(x, y, size) {
+    constructor(x, y, size, image = null) {
         this.x = x;
         this.y = y;
         this.size = size;
+        this.image = image;
 
         // Chat bubble properties
         this.chatMessage = null;
@@ -79,12 +81,21 @@ class GameObject {
      */
     isPointInside(clickX, clickY, objectScreenX) {
         // Calculate object bounds using its screen position
-        const left = objectScreenX - this.size / 2;
-        const right = objectScreenX + this.size / 2;
+        const halfWidth = this.getHitboxWidth() / 2;
+        const left = objectScreenX - halfWidth;
+        const right = objectScreenX + halfWidth;
         const top = this.y - this.size;
         const bottom = this.y;
 
         return clickX >= left && clickX <= right && clickY >= top && clickY <= bottom;
+    }
+
+    /**
+     * Get the clickable width of the object
+     * Subclasses can override this if their visual width != size
+     */
+    getHitboxWidth() {
+        return this.size;
     }
 
     /**

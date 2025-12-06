@@ -1,7 +1,6 @@
 class House extends GameObject {
     constructor(x, y, size, image) {
-        super(x, y, size);
-        this.image = image;
+        super(x, y, size, image);
     }
 
     render(ctx, scale, scrollOffset, canvasWidth, timestamp) {

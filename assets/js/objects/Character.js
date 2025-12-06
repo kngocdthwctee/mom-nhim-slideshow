@@ -10,8 +10,7 @@ class Character extends GameObject {
      * @param {string} name - Character name
      */
     constructor(x, y, size, image, name) {
-        super(x, y, size);
-        this.image = image;
+        super(x, y, size, image);
         this.name = name;
     }
 

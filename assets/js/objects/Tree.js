@@ -11,9 +11,8 @@ class Tree extends GameObject {
      * @param {boolean} flip - Whether to flip horizontally
      */
     constructor(x, y, size, type, images, flip = false) {
-        super(x, y, size);
+        super(x, y, size, images[type]);
         this.type = type;
-        this.images = images;
         this.flip = flip;
     }
 
@@ -55,10 +54,9 @@ class Tree extends GameObject {
         const screenX = this.getScreenX(scrollOffset, canvasWidth);
         if (screenX === null) return;
 
-        const img = this.images[this.type];
-        if (!img || !img.complete) return;
+        if (!this.image || !this.image.complete) return;
 
-        this.drawTree(ctx, img, screenX, this.y, this.flip);
+        this.drawTree(ctx, this.image, screenX, this.y, this.flip);
 
         // Draw chat bubble if active
         this.drawChatBubble(ctx, screenX, scale);

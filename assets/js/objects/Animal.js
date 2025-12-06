@@ -12,9 +12,8 @@ class Animal extends GameObject {
      * @param {number} bobPhase - Phase offset for bobbing animation
      */
     constructor(x, y, size, type, images, flip = false, bobPhase = 0) {
-        super(x, y, size);
+        super(x, y, size, images[type]);
         this.type = type;
-        this.images = images;
         this.flip = flip;
         this.bobPhase = bobPhase;
     }
@@ -58,13 +57,12 @@ class Animal extends GameObject {
         const screenX = this.getScreenX(scrollOffset, canvasWidth);
         if (screenX === null) return;
 
-        const img = this.images[this.type];
-        if (!img || !img.complete) return;
+        if (!this.image || !this.image.complete) return;
 
         // Calculate bobbing offset
         const bob = Math.sin(timestamp / 1000 + this.bobPhase) * 3;
 
-        this.drawAnimal(ctx, img, screenX, this.y + bob, this.flip);
+        this.drawAnimal(ctx, this.image, screenX, this.y + bob, this.flip);
 
         // Draw chat bubble if active
         this.drawChatBubble(ctx, screenX, scale);

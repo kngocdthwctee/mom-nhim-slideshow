@@ -73,7 +73,7 @@ class Slide1 extends BaseSlide {
         // Let's check Character.js constructor signature first.
         // It takes (x, y, size, name, image, flip). image is a single Image object (from GardenSlide logic: this.characterImages[i]).
 
-        const momChar = new Character(x, groundY, size, "Nhím - Mom", this.momImage, false);
+        const momChar = new Character(x, groundY, size, this.momImage, "Nhím - Mom");
         this.characters.push(momChar);
     }
 
@@ -125,8 +125,9 @@ class Slide1 extends BaseSlide {
         this.drawBackground(ctx, timestamp);
         this.drawGround(ctx, scale);
 
+        this.drawFence(ctx, scale, scrollOffset);
+
         // Render houses first (background layer)
-        // this.drawHouses(ctx, scale, scrollOffset); <--- Remove this old call
         if (this.houses) {
             this.houses.forEach(house => {
                 house.render(ctx, scale, scrollOffset, this.width, timestamp);
@@ -139,8 +140,6 @@ class Slide1 extends BaseSlide {
                 char.render(ctx, scale, scrollOffset, this.width, timestamp);
             });
         }
-
-        this.drawFence(ctx, scale, scrollOffset);
         this.drawSnowfall(ctx, timestamp);
 
         ctx.restore();
