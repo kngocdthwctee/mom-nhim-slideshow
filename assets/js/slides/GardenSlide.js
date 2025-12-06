@@ -21,6 +21,18 @@ class Slide2 extends BaseSlide {
         this.cameraEnabled = true;
 
         this.trees = [];
+        this.characters = [];
+        this.characterImages = [];
+
+        // Character names corresponding to chr_0.png to chr_46.png
+        this.characterNames = [
+            "Lez", "HLuan", "Tvy🌷", "ThTien", "tngyn", "anhPhong", "nno", "XThanh",
+            "Pun", "qn🍧", "Bé5", "Dòi", "Táo", "Zin", "Bon🧊", "Ếch",
+            "Xuyến", "Giang", "Nom", "NHND", "Anh3", "TuJuno", "TuấnL", "Tuấncon",
+            "Latuna", "ChịBi", "Chanh", "TP", "KennyPhong", "Lê Bảo", "VHieu", "empuu",
+            "cớt🐷", "KVinh", "LPhi", "TiênNữ", "TThao", "qnhu✌️", "anhCá", "ThiSon",
+            "L.ANH", "PNhi", "khoinguyen", "Chip", "pphhuy", "duke", "Mò"
+        ];
 
         // Images
         this.images = {
@@ -44,7 +56,9 @@ class Slide2 extends BaseSlide {
         this.images.caychuoi.src = 'assets/images/garden/caychuoi.png';
         this.images.caycam.src = 'assets/images/garden/caycam.png';
 
+        this.loadCharacterImages();
         this.initTrees();
+        this.initCharacters();
     }
 
     initTrees() {
@@ -78,6 +92,40 @@ class Slide2 extends BaseSlide {
 
         // Sort trees by Y coordinate (smaller Y first) to handle depth overlapping correctly
         this.trees.sort((a, b) => a.y - b.y);
+    }
+
+    loadCharacterImages() {
+        this.characterImages = [];
+        for (let i = 0; i < this.characterNames.length; i++) {
+            const img = new Image();
+            img.src = `assets/images/characters/chr_${i}.png`;
+            this.characterImages.push(img);
+        }
+    }
+
+    initCharacters() {
+        this.characters = [];
+        const scale = Math.min(this.width, this.height) / 800;
+
+        const groundY = this.height - 100 * scale;
+        const charSize = 80 * scale;
+        const numChars = this.characterNames.length;
+        const baseSpacing = this.width * 2.5 / numChars;
+
+        this.characterNames.forEach((name, i) => {
+            const baseX = (i * baseSpacing) + (Math.random() - 0.5) * baseSpacing * 0.7;
+            const yOffset = (Math.random() * 200 - 100) * scale;
+
+            this.characters.push({
+                name: name,
+                imageIndex: i,
+                x: baseX,
+                y: groundY + yOffset,
+                size: charSize
+            });
+        });
+
+        this.characters.sort((a, b) => a.y - b.y);
     }
 
     initFlowers() {
@@ -146,6 +194,7 @@ class Slide2 extends BaseSlide {
         this.width = width;
         this.height = height;
         this.initTrees();
+        this.initCharacters();
         super.initSnowfall();
     }
 
@@ -167,6 +216,7 @@ class Slide2 extends BaseSlide {
         this.drawBackground(ctx, timestamp);
         this.drawGround(ctx, scale);
         this.drawFence(ctx, scale, scrollOffset);
+        this.drawCharacters(ctx, scale, scrollOffset);
         this.drawTreeImages(ctx, scale, scrollOffset);
         this.drawSnowfall(ctx, timestamp);
 
@@ -282,6 +332,54 @@ class Slide2 extends BaseSlide {
         ctx.drawImage(img, x - width / 2, bottomY - height, width, height);
     }
 
+    drawCharacters(ctx, scale, scrollOffset) {
+        this.characters.forEach(char => {
+            const screenX = char.x - scrollOffset;
+
+            if (screenX > -char.size && screenX < this.width + char.size) {
+                const img = this.characterImages[char.imageIndex];
+
+                if (img && img.complete) {
+                    ctx.save();
+                    const aspect = img.width / img.height;
+                    const width = char.size * aspect;
+                    const height = char.size;
+
+                    ctx.drawImage(img, screenX - width / 2, char.y - height, width, height);
+                    ctx.restore();
+                }
+
+                this.drawCharacterName(ctx, char.name, screenX, char.y - char.size - 5, scale);
+            }
+        });
+    }
+
+    drawCharacterName(ctx, name, x, y, scale) {
+        ctx.save();
+        ctx.font = `bold ${12 * scale}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+
+        const textWidth = ctx.measureText(name).width;
+        const padding = 4 * scale;
+
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.beginPath();
+        ctx.roundRect(
+            x - textWidth / 2 - padding,
+            y - 18 * scale,
+            textWidth + padding * 2,
+            20 * scale,
+            3 * scale
+        );
+        ctx.fill();
+
+        ctx.fillStyle = '#fff';
+        ctx.fillText(name, x, y);
+
+        ctx.restore();
+    }
+
     drawSparkles(ctx, timestamp, scale) {
         this.sparkles.forEach(s => {
             // Update
@@ -381,6 +479,7 @@ class Slide2 extends BaseSlide {
     cleanup() {
         super.cleanup();
         this.trees = [];
+        this.characters = [];
     }
 
 }
