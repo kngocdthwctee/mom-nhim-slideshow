@@ -76,22 +76,16 @@ class Slide3 extends BaseSlide {
             const jitter = (Math.random() - 0.5) * (baseSpacing * 0.3);
             const x = (i * baseSpacing) + jitter;
 
-            // Random Y offset for depth
             const yOffset = (Math.random() * 150 - 75) * scale;
-            const size = (150 + Math.random() * 80) * scale;
+            const size = (80 + Math.random() * 20) * scale;
+            const flip = Math.random() > 0.5;
+            const bobPhase = Math.random() * Math.PI * 2;
 
-            this.animals.push({
-                type: type,
-                x: x,
-                y: groundY + yOffset,
-                size: size,
-                flip: Math.random() > 0.5,
-                bobPhase: Math.random() * Math.PI * 2
-            });
+            // Create Animal object
+            this.animals.push(new Animal(x, groundY + yOffset, size, type, this.images, flip, bobPhase));
         }
 
-        // Sort animals by Y coordinate for proper depth
-        this.animals.sort((a, b) => a.y - b.y);
+        // No need to sort here, will sort with characters together
     }
 
     loadCharacterImages() {
@@ -108,24 +102,21 @@ class Slide3 extends BaseSlide {
         const scale = Math.min(this.width, this.height) / 800;
 
         const groundY = this.height - 100 * scale;
-        const charSize = 80 * scale;
+        const charSize = 120 * scale;
         const numChars = this.characterNames.length;
         const baseSpacing = this.width * 2.5 / numChars;
+        const offsetX = -100 * scale; // Shift all characters to the left
 
         this.characterNames.forEach((name, i) => {
-            const baseX = (i * baseSpacing) + (Math.random() - 0.5) * baseSpacing * 0.7;
+            const baseX = (i * baseSpacing) + (Math.random() - 0.5) * baseSpacing * 0.7 + offsetX;
             const yOffset = (Math.random() * 200 - 100) * scale;
 
-            this.characters.push({
-                name: name,
-                imageIndex: i,
-                x: baseX,
-                y: groundY + yOffset,
-                size: charSize
-            });
+            // Create Character object
+            const image = this.characterImages[i];
+            this.characters.push(new Character(baseX, groundY + yOffset, charSize, image, name));
         });
 
-        this.characters.sort((a, b) => a.y - b.y);
+        // No need to sort here, will sort with animals together
     }
 
     initGrass() {
@@ -179,42 +170,13 @@ class Slide3 extends BaseSlide {
         this.drawGround(ctx, scale);
         this.drawFence(ctx, scale, scrollOffset);
 
-        // Combine all objects and sort by Y depth
-        const allObjects = [];
-        this.characters.forEach(c => allObjects.push({ type: 'char', data: c }));
-        this.animals.forEach(a => allObjects.push({ type: 'animal', data: a }));
-        allObjects.sort((a, b) => a.data.y - b.data.y);
+        // Combine all game objects and sort by depth
+        const allObjects = [...this.characters, ...this.animals];
+        allObjects.sort((a, b) => a.getDepth() - b.getDepth());
 
-        // Render in sorted order
+        // Render all objects polymorphically
         allObjects.forEach(obj => {
-            if (obj.type === 'char') {
-                const char = obj.data;
-                const screenX = char.x - scrollOffset;
-                if (screenX > -char.size && screenX < this.width + char.size) {
-                    const img = this.characterImages[char.imageIndex];
-                    this.drawCharacter(ctx, img, screenX, char.y, char.size, char.name, scale);
-                }
-            } else {
-                const animal = obj.data;
-                const img = this.images[animal.type];
-                if (img && img.complete) {
-                    let screenX = animal.x - scrollOffset;
-                    if (screenX < -animal.size) screenX += this.loopWidth;
-                    if (screenX > this.width + animal.size) screenX -= this.loopWidth;
-                    if (screenX > -animal.size && screenX < this.width + animal.size) {
-                        const bob = Math.sin(timestamp / 1000 + animal.bobPhase) * 3;
-                        ctx.save();
-                        if (animal.flip) {
-                            ctx.translate(screenX + animal.size, animal.y + bob);
-                            ctx.scale(-1, 1);
-                            this.drawSingleAnimal(ctx, img, 0, 0, animal.size);
-                        } else {
-                            this.drawSingleAnimal(ctx, img, screenX, animal.y + bob, animal.size);
-                        }
-                        ctx.restore();
-                    }
-                }
-            }
+            obj.render(ctx, scale, scrollOffset, this.width, this.loopWidth, timestamp);
         });
 
         this.drawSnowfall(ctx, timestamp);

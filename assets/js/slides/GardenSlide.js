@@ -77,21 +77,15 @@ class Slide2 extends BaseSlide {
             const baseSpacing = this.width / numTrees;
             const jitter = (Math.random() - 0.5) * (baseSpacing * 0.3);
             const x = (i * baseSpacing) + jitter;
-            // Increased random Y offset for more depth/scatter
             const yOffset = (Math.random() * 200 - 100) * scale;
-            const size = (200 + Math.random() * 100) * scale;
+            const size = (150 + Math.random() * 20) * scale;
+            const flip = Math.random() > 0.5;
 
-            this.trees.push({
-                type: type,
-                x: x,
-                y: groundY + yOffset,
-                size: size,
-                flip: Math.random() > 0.5
-            });
+            // Create Tree object
+            this.trees.push(new Tree(x, groundY + yOffset, size, type, this.images, flip));
         }
 
-        // Sort trees by Y coordinate (smaller Y first) to handle depth overlapping correctly
-        this.trees.sort((a, b) => a.y - b.y);
+        // No need to sort here, will sort with characters together
     }
 
     loadCharacterImages() {
@@ -108,24 +102,21 @@ class Slide2 extends BaseSlide {
         const scale = Math.min(this.width, this.height) / 800;
 
         const groundY = this.height - 100 * scale;
-        const charSize = 80 * scale;
+        const charSize = 120 * scale;
         const numChars = this.characterNames.length;
         const baseSpacing = this.width * 2.5 / numChars;
+        const offsetX = -100 * scale; // Shift all characters to the left
 
         this.characterNames.forEach((name, i) => {
-            const baseX = (i * baseSpacing) + (Math.random() - 0.5) * baseSpacing * 0.7;
+            const baseX = (i * baseSpacing) + (Math.random() - 0.5) * baseSpacing * 0.7 + offsetX;
             const yOffset = (Math.random() * 200 - 100) * scale;
 
-            this.characters.push({
-                name: name,
-                imageIndex: i,
-                x: baseX,
-                y: groundY + yOffset,
-                size: charSize
-            });
+            // Create Character object
+            const image = this.characterImages[i];
+            this.characters.push(new Character(baseX, groundY + yOffset, charSize, image, name));
         });
 
-        this.characters.sort((a, b) => a.y - b.y);
+        // No need to sort here, will sort with trees together
     }
 
     initFlowers() {
@@ -217,41 +208,13 @@ class Slide2 extends BaseSlide {
         this.drawGround(ctx, scale);
         this.drawFence(ctx, scale, scrollOffset);
 
-        // Combine all objects and sort by Y depth
-        const allObjects = [];
-        this.characters.forEach(c => allObjects.push({ type: 'char', data: c }));
-        this.trees.forEach(t => allObjects.push({ type: 'tree', data: t }));
-        allObjects.sort((a, b) => a.data.y - b.data.y);
+        // Combine all game objects and sort by depth
+        const allObjects = [...this.characters, ...this.trees];
+        allObjects.sort((a, b) => a.getDepth() - b.getDepth());
 
-        // Render in sorted order
+        // Render all objects polymorphically
         allObjects.forEach(obj => {
-            if (obj.type === 'char') {
-                const char = obj.data;
-                const screenX = char.x - scrollOffset;
-                if (screenX > -char.size && screenX < this.width + char.size) {
-                    const img = this.characterImages[char.imageIndex];
-                    this.drawCharacter(ctx, img, screenX, char.y, char.size, char.name, scale);
-                }
-            } else {
-                const tree = obj.data;
-                const img = this.images[tree.type];
-                if (img && img.complete) {
-                    let screenX = tree.x - scrollOffset;
-                    if (screenX < -tree.size) screenX += this.loopWidth;
-                    if (screenX > this.width + tree.size) screenX -= this.loopWidth;
-                    if (screenX > -tree.size && screenX < this.width + tree.size) {
-                        ctx.save();
-                        if (tree.flip) {
-                            ctx.translate(screenX + tree.size, tree.y);
-                            ctx.scale(-1, 1);
-                            this.drawSingleTree(ctx, img, 0, 0, tree.size);
-                        } else {
-                            this.drawSingleTree(ctx, img, screenX, tree.y, tree.size);
-                        }
-                        ctx.restore();
-                    }
-                }
-            }
+            obj.render(ctx, scale, scrollOffset, this.width, this.loopWidth, timestamp);
         });
 
         this.drawSnowfall(ctx, timestamp);

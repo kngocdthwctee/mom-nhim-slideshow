@@ -1,0 +1,68 @@
+/**
+ * Animal - Represents an animal object in the slide
+ */
+class Animal extends GameObject {
+    /**
+     * @param {number} x - X position
+     * @param {number} y - Y position (bottom)
+     * @param {number} size - Animal size
+     * @param {string} type - Animal type (conga, conlon, etc.)
+     * @param {Object} images - Map of animal images
+     * @param {boolean} flip - Whether to flip horizontally
+     * @param {number} bobPhase - Phase offset for bobbing animation
+     */
+    constructor(x, y, size, type, images, flip = false, bobPhase = 0) {
+        super(x, y, size);
+        this.type = type;
+        this.images = images;
+        this.flip = flip;
+        this.bobPhase = bobPhase;
+    }
+
+    /**
+     * Render the animal with bobbing animation
+     * @param {CanvasRenderingContext2D} ctx - Canvas context
+     * @param {number} scale - Scale factor
+     * @param {number} scrollOffset - Camera scroll offset
+     * @param {number} canvasWidth - Canvas width
+     * @param {number} loopWidth - Width for wrapping
+     * @param {number} timestamp - Animation timestamp
+     */
+    render(ctx, scale, scrollOffset, canvasWidth, loopWidth, timestamp) {
+        const screenX = this.getScreenX(scrollOffset, canvasWidth, loopWidth);
+        if (screenX === null) return;
+
+        const img = this.images[this.type];
+        if (!img || !img.complete) return;
+
+        // Calculate bobbing offset
+        const bob = Math.sin(timestamp / 1000 + this.bobPhase) * 3;
+
+        ctx.save();
+
+        if (this.flip) {
+            ctx.translate(screenX + this.size, this.y + bob);
+            ctx.scale(-1, 1);
+            this.drawAnimal(ctx, img, 0, 0);
+        } else {
+            this.drawAnimal(ctx, img, screenX, this.y + bob);
+        }
+
+        ctx.restore();
+    }
+
+    /**
+     * Draw animal at specified position
+     * @param {CanvasRenderingContext2D} ctx - Canvas context
+     * @param {Image} img - Animal image
+     * @param {number} x - X position (center)
+     * @param {number} bottomY - Bottom Y position
+     */
+    drawAnimal(ctx, img, x, bottomY) {
+        const aspect = img.width / img.height;
+        const width = this.size * aspect;
+        const height = this.size;
+
+        ctx.drawImage(img, x - width / 2, bottomY - height, width, height);
+    }
+}

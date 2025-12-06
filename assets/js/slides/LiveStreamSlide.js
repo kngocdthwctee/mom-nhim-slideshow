@@ -118,7 +118,7 @@ class LiveStreamSlide extends BaseSlide {
         const commentList = [
             { text: "Hi mum", username: "Pun", startTime: 500 },
             { text: "Hê lô mom", username: "qn", startTime: 600 },
-            { text: "Hê lô nhím", username: "Ong", startTime: 1500 },
+            { text: "Hê lô nhím", username: "Ong Chăm Chỉ", startTime: 1500 },
             { text: "@qn hí iuuu", username: "Pun", startTime: 3000 },
             { text: "@Pun hí iuu", username: "qn", startTime: 4000 },
             { text: "Đã tặng x10 Bông hồng", username: "qn", startTime: 13000 },
@@ -144,8 +144,8 @@ class LiveStreamSlide extends BaseSlide {
             { text: "Adduuuu", username: "Pun" },
             { text: "U ni vơ", username: "Pun" },
             { text: "Aduuuu uniiiii", username: "qn" },
-            { text: "Giàu dữ tr", username: "vandung" },
-            { text: "Aduuuu, uni", username: "XuanThanh" }
+            { text: "Giàu dữ tr", username: "Vand Dung" },
+            { text: "Aduuuu, uni", username: "Xuân Thànhh" }
         ];
 
         reactions.forEach((r, i) => {
