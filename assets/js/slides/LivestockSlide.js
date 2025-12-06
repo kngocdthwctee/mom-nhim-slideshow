@@ -178,8 +178,51 @@ class Slide3 extends BaseSlide {
         this.drawBackground(ctx);
         this.drawGround(ctx, scale);
         this.drawFence(ctx, scale, scrollOffset);
-        this.drawCharacters(ctx, scale, scrollOffset);
-        this.drawAnimals(ctx, scale, scrollOffset, timestamp);
+
+        // Combine all objects and sort by Y depth
+        const allObjects = [];
+        this.characters.forEach(c => allObjects.push({ type: 'char', data: c }));
+        this.animals.forEach(a => allObjects.push({ type: 'animal', data: a }));
+        allObjects.sort((a, b) => a.data.y - b.data.y);
+
+        // Render in sorted order
+        allObjects.forEach(obj => {
+            if (obj.type === 'char') {
+                const char = obj.data;
+                const screenX = char.x - scrollOffset;
+                if (screenX > -char.size && screenX < this.width + char.size) {
+                    const img = this.characterImages[char.imageIndex];
+                    if (img && img.complete) {
+                        const aspect = img.width / img.height;
+                        const width = char.size * aspect;
+                        const height = char.size;
+                        ctx.drawImage(img, screenX - width / 2, char.y - height, width, height);
+                    }
+                    this.drawCharacterName(ctx, char.name, screenX, char.y - char.size - 5, scale);
+                }
+            } else {
+                const animal = obj.data;
+                const img = this.images[animal.type];
+                if (img && img.complete) {
+                    let screenX = animal.x - scrollOffset;
+                    if (screenX < -animal.size) screenX += this.loopWidth;
+                    if (screenX > this.width + animal.size) screenX -= this.loopWidth;
+                    if (screenX > -animal.size && screenX < this.width + animal.size) {
+                        const bob = Math.sin(timestamp / 1000 + animal.bobPhase) * 3;
+                        ctx.save();
+                        if (animal.flip) {
+                            ctx.translate(screenX + animal.size, animal.y + bob);
+                            ctx.scale(-1, 1);
+                            this.drawSingleAnimal(ctx, img, 0, 0, animal.size);
+                        } else {
+                            this.drawSingleAnimal(ctx, img, screenX, animal.y + bob, animal.size);
+                        }
+                        ctx.restore();
+                    }
+                }
+            }
+        });
+
         this.drawSnowfall(ctx, timestamp);
 
         ctx.restore();

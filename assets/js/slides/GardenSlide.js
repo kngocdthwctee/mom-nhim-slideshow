@@ -216,8 +216,50 @@ class Slide2 extends BaseSlide {
         this.drawBackground(ctx, timestamp);
         this.drawGround(ctx, scale);
         this.drawFence(ctx, scale, scrollOffset);
-        this.drawCharacters(ctx, scale, scrollOffset);
-        this.drawTreeImages(ctx, scale, scrollOffset);
+
+        // Combine all objects and sort by Y depth
+        const allObjects = [];
+        this.characters.forEach(c => allObjects.push({ type: 'char', data: c }));
+        this.trees.forEach(t => allObjects.push({ type: 'tree', data: t }));
+        allObjects.sort((a, b) => a.data.y - b.data.y);
+
+        // Render in sorted order
+        allObjects.forEach(obj => {
+            if (obj.type === 'char') {
+                const char = obj.data;
+                const screenX = char.x - scrollOffset;
+                if (screenX > -char.size && screenX < this.width + char.size) {
+                    const img = this.characterImages[char.imageIndex];
+                    if (img && img.complete) {
+                        const aspect = img.width / img.height;
+                        const width = char.size * aspect;
+                        const height = char.size;
+                        ctx.drawImage(img, screenX - width / 2, char.y - height, width, height);
+                    }
+                    this.drawCharacterName(ctx, char.name, screenX, char.y - char.size - 5, scale);
+                }
+            } else {
+                const tree = obj.data;
+                const img = this.images[tree.type];
+                if (img && img.complete) {
+                    let screenX = tree.x - scrollOffset;
+                    if (screenX < -tree.size) screenX += this.loopWidth;
+                    if (screenX > this.width + tree.size) screenX -= this.loopWidth;
+                    if (screenX > -tree.size && screenX < this.width + tree.size) {
+                        ctx.save();
+                        if (tree.flip) {
+                            ctx.translate(screenX + tree.size, tree.y);
+                            ctx.scale(-1, 1);
+                            this.drawSingleTree(ctx, img, 0, 0, tree.size);
+                        } else {
+                            this.drawSingleTree(ctx, img, screenX, tree.y, tree.size);
+                        }
+                        ctx.restore();
+                    }
+                }
+            }
+        });
+
         this.drawSnowfall(ctx, timestamp);
 
         ctx.restore();
