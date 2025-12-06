@@ -62,24 +62,38 @@ class Animal extends GameObject {
         const img = this.images[this.type];
         if (!img || !img.complete) return;
 
-        this.drawAnimal(ctx, img, screenX, this.y);
+        // Calculate bobbing offset
+        const bob = Math.sin(timestamp / 1000 + this.bobPhase) * 3;
+
+        this.drawAnimal(ctx, img, screenX, this.y + bob, this.flip);
 
         // Draw chat bubble if active
         this.drawChatBubble(ctx, screenX, scale);
     }
 
     /**
-     * Draw animal at specified position
+     * Draw animal at specified position with flip support
      * @param {CanvasRenderingContext2D} ctx - Canvas context
      * @param {Image} img - Animal image
      * @param {number} x - X position (center)
      * @param {number} bottomY - Bottom Y position
+     * @param {boolean} flip - Whether to flip horizontally
      */
-    drawAnimal(ctx, img, x, bottomY) {
+    drawAnimal(ctx, img, x, bottomY, flip) {
+        ctx.save();
+        ctx.translate(x, bottomY);
+
+        if (flip) {
+            ctx.scale(-1, 1);
+        }
+
         const aspect = img.width / img.height;
         const width = this.size * aspect;
         const height = this.size;
 
-        ctx.drawImage(img, x - width / 2, bottomY - height, width, height);
+        // Draw centered horizontally, sitting on bottomY
+        ctx.drawImage(img, -width / 2, -height, width, height);
+
+        ctx.restore();
     }
 }

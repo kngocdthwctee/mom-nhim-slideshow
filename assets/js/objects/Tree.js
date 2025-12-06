@@ -59,24 +59,35 @@ class Tree extends GameObject {
         const img = this.images[this.type];
         if (!img || !img.complete) return;
 
-        this.drawTree(ctx, img, screenX, this.y);
+        this.drawTree(ctx, img, screenX, this.y, this.flip);
 
         // Draw chat bubble if active
         this.drawChatBubble(ctx, screenX, scale);
     }
 
     /**
-     * Draw tree at specified position
+     * Draw tree at specified position with flip support
      * @param {CanvasRenderingContext2D} ctx - Canvas context
      * @param {Image} img - Tree image
      * @param {number} x - X position (center)
      * @param {number} bottomY - Bottom Y position
+     * @param {boolean} flip - Whether to flip horizontally
      */
-    drawTree(ctx, img, x, bottomY) {
+    drawTree(ctx, img, x, bottomY, flip) {
+        ctx.save();
+        ctx.translate(x, bottomY);
+
+        if (flip) {
+            ctx.scale(-1, 1);
+        }
+
         const aspect = img.width / img.height;
         const width = this.size * aspect;
         const height = this.size;
 
-        ctx.drawImage(img, x - width / 2, bottomY - height, width, height);
+        // Draw centered horizontally, sitting on bottomY
+        ctx.drawImage(img, -width / 2, -height, width, height);
+
+        ctx.restore();
     }
 }
