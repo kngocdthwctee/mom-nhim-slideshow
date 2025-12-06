@@ -62,20 +62,7 @@ class Animal extends GameObject {
         const img = this.images[this.type];
         if (!img || !img.complete) return;
 
-        // Calculate bobbing offset
-        const bob = Math.sin(timestamp / 1000 + this.bobPhase) * 3;
-
-        ctx.save();
-
-        if (this.flip) {
-            ctx.translate(screenX + this.size, this.y + bob);
-            ctx.scale(-1, 1);
-            this.drawAnimal(ctx, img, 0, 0);
-        } else {
-            this.drawAnimal(ctx, img, screenX, this.y + bob);
-        }
-
-        ctx.restore();
+        this.drawAnimal(ctx, img, screenX, this.y);
 
         // Draw chat bubble if active
         this.drawChatBubble(ctx, screenX, scale);

@@ -59,17 +59,7 @@ class Tree extends GameObject {
         const img = this.images[this.type];
         if (!img || !img.complete) return;
 
-        ctx.save();
-
-        if (this.flip) {
-            ctx.translate(screenX + this.size, this.y);
-            ctx.scale(-1, 1);
-            this.drawTree(ctx, img, 0, 0);
-        } else {
-            this.drawTree(ctx, img, screenX, this.y);
-        }
-
-        ctx.restore();
+        this.drawTree(ctx, img, screenX, this.y);
 
         // Draw chat bubble if active
         this.drawChatBubble(ctx, screenX, scale);
