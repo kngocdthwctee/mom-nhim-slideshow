@@ -4,8 +4,8 @@ class House extends GameObject {
         this.image = image;
     }
 
-    render(ctx, scale, scrollOffset, canvasWidth, loopWidth, timestamp) {
-        const screenX = this.getScreenX(scrollOffset, canvasWidth, loopWidth);
+    render(ctx, scale, scrollOffset, canvasWidth, timestamp) {
+        const screenX = this.getScreenX(scrollOffset, canvasWidth);
         if (screenX === null) return;
 
         if (!this.image || !this.image.complete) return;

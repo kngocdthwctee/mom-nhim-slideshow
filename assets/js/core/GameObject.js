@@ -33,14 +33,8 @@ class GameObject {
      * @param {number} loopWidth - Width for wrapping
      * @returns {number|null} Screen X position or null if off-screen
      */
-    getScreenX(scrollOffset, canvasWidth, loopWidth) {
+    getScreenX(scrollOffset, canvasWidth) {
         let screenX = this.x - scrollOffset;
-
-        // Wrap around for infinite scrolling
-        if (loopWidth) {
-            if (screenX < -this.size) screenX += loopWidth;
-            if (screenX > canvasWidth + this.size) screenX -= loopWidth;
-        }
 
         // Check if visible
         if (screenX < -this.size || screenX > canvasWidth + this.size) {
@@ -172,10 +166,9 @@ class GameObject {
      * @param {number} scale - Scale factor
      * @param {number} scrollOffset - Camera scroll offset
      * @param {number} canvasWidth - Canvas width
-     * @param {number} loopWidth - Width for wrapping
      * @param {number} timestamp - Animation timestamp
      */
-    render(ctx, scale, scrollOffset, canvasWidth, loopWidth, timestamp) {
+    render(ctx, scale, scrollOffset, canvasWidth, timestamp) {
         throw new Error('render() must be implemented by subclass');
     }
 }

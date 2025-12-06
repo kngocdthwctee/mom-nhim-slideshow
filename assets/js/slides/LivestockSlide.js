@@ -76,7 +76,7 @@ class Slide3 extends BaseSlide {
         const allObjects = [...this.characters, ...this.animals];
         for (let i = allObjects.length - 1; i >= 0; i--) {
             const obj = allObjects[i];
-            const screenX = obj.getScreenX(scrollOffset, this.width, this.loopWidth);
+            const screenX = obj.getScreenX(scrollOffset, this.width);
             if (screenX !== null && obj.isPointInside(x, y, screenX)) {
                 obj.onClick();
                 break; // Only trigger first clicked object
@@ -225,7 +225,7 @@ class Slide3 extends BaseSlide {
 
         // Render all objects polymorphically
         allObjects.forEach(obj => {
-            obj.render(ctx, scale, scrollOffset, this.width, this.loopWidth, timestamp);
+            obj.render(ctx, scale, scrollOffset, this.width, timestamp);
         });
 
         this.drawSnowfall(ctx, timestamp);

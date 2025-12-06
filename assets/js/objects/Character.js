@@ -52,11 +52,10 @@ class Character extends GameObject {
      * @param {number} scale - Scale factor
      * @param {number} scrollOffset - Camera scroll offset
      * @param {number} canvasWidth - Canvas width
-     * @param {number} loopWidth - Width for wrapping (optional)
      * @param {number} timestamp - Animation timestamp (unused)
      */
-    render(ctx, scale, scrollOffset, canvasWidth, loopWidth, timestamp) {
-        const screenX = this.getScreenX(scrollOffset, canvasWidth, loopWidth);
+    render(ctx, scale, scrollOffset, canvasWidth, timestamp) {
+        const screenX = this.getScreenX(scrollOffset, canvasWidth);
         if (screenX === null) return;
 
         if (!this.image || !this.image.complete) return;
