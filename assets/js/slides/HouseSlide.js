@@ -2,10 +2,10 @@
  * Slide 1 - Ngôi nhà của Mom Nhím
  * Vẽ ngôi nhà sáng sủa với hiệu ứng tim bay
  */
-class Slide1 extends BaseSlide {
+class HouseSlide extends BaseSlide {
     constructor() {
         super();
-        console.log('Slide1 initialized - Interactive House Version');
+        console.log('HouseSlide initialized - Interactive House Version');
         this.title = 'Ngôi nhà của Mom Nhím';
         this.content = `
             <p>Đêm Giáng Sinh, căn nhà của Mom sáng rực như được "buff ánh sáng cấp 10", đèn nhấp nháy lung linh đến mức mấy con tuần lộc bay ngang còn phải nheo mắt.</p>
@@ -160,4 +160,4 @@ class Slide1 extends BaseSlide {
 }
 
 // Đăng ký slide
-window.slideManager.addSlide(new Slide1());
+window.slideManager.addSlide(new HouseSlide());

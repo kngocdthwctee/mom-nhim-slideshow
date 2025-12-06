@@ -2,7 +2,7 @@
  * Slide 4 - Lời chúc Giáng Sinh
  * Vẽ cảnh Mom Nhím gửi lời chúc với hiệu ứng lễ hội
  */
-class Slide4 extends BaseSlide {
+class ChristmasSlide extends BaseSlide {
     constructor() {
         super();
         this.title = 'Lời chúc Giáng Sinh 🎄';
@@ -390,4 +390,4 @@ class Slide4 extends BaseSlide {
 }
 
 // Đăng ký slide
-window.slideManager.addSlide(new Slide4());
+window.slideManager.addSlide(new ChristmasSlide());

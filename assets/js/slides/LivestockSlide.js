@@ -2,10 +2,10 @@
  * Slide 3 - Khu chuồng trại chăn nuôi
  * Vẽ chuồng trại với các con vật: gà, lợn, bò, trâu
  */
-class Slide3 extends BaseSlide {
+class LivestockSlide extends BaseSlide {
     constructor() {
         super();
-        console.log('Slide3 initialized - Livestock Pen Version');
+        console.log('LivestockSlide initialized - Livestock Pen Version');
         this.title = 'Khu chuồng trại';
         this.content = `
             <p>Phía bên là khu chuồng trại Mom chăm sóc: </p>
@@ -237,77 +237,6 @@ class Slide3 extends BaseSlide {
         super.drawGround(ctx, scale, 'brown');
     }
 
-
-    drawAnimals(ctx, scale, scrollOffset, timestamp) {
-        this.animals.forEach(animal => {
-            const img = this.images[animal.type];
-            if (img && img.complete) {
-                let screenX = animal.x - scrollOffset;
-
-                // Wrap around
-                if (screenX < -animal.size) screenX += this.loopWidth;
-                if (screenX > this.width + animal.size) screenX -= this.loopWidth;
-
-                if (screenX > -animal.size && screenX < this.width + animal.size) {
-                    // Small bobbing animation
-                    const bob = Math.sin(timestamp / 1000 + animal.bobPhase) * 3;
-
-                    ctx.save();
-                    if (animal.flip) {
-                        ctx.translate(screenX + animal.size, animal.y + bob);
-                        ctx.scale(-1, 1);
-                        this.drawSingleAnimal(ctx, img, 0, 0, animal.size);
-                    } else {
-                        this.drawSingleAnimal(ctx, img, screenX, animal.y + bob, animal.size);
-                    }
-                    ctx.restore();
-                }
-            }
-        });
-    }
-
-    drawSingleAnimal(ctx, img, x, bottomY, size) {
-        const aspect = img.width / img.height;
-        const width = size * aspect;
-        const height = size;
-
-        ctx.drawImage(img, x - width / 2, bottomY - height, width, height);
-    }
-
-    drawButterflies(ctx, timestamp, scale) {
-        this.butterflies.forEach(b => {
-            b.x += Math.cos(timestamp / 1000 + b.phase) * b.speed;
-            b.y += Math.sin(timestamp / 800 + b.phase) * 0.5;
-
-            // Wrap around
-            if (b.x > this.width + 20) b.x = -20;
-            if (b.x < -20) b.x = this.width + 20;
-            if (b.y > this.height) b.y = 0;
-            if (b.y < 0) b.y = this.height;
-
-            const wingFlap = Math.abs(Math.sin(timestamp / 100 + b.phase));
-
-            ctx.save();
-            ctx.translate(b.x, b.y);
-
-            // Simple butterfly shape
-            ctx.fillStyle = '#FFB6C1';
-            ctx.beginPath();
-            ctx.ellipse(-3 * scale, 0, 4 * scale * wingFlap, 6 * scale, -0.3, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.beginPath();
-            ctx.ellipse(3 * scale, 0, 4 * scale * wingFlap, 6 * scale, 0.3, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Body
-            ctx.fillStyle = '#000';
-            ctx.fillRect(-1, -3 * scale, 2, 6 * scale);
-
-            ctx.restore();
-        });
-    }
-
     cleanup() {
         super.cleanup();
         if (this.canvas && this.handleCanvasClick) {
@@ -319,4 +248,4 @@ class Slide3 extends BaseSlide {
 }
 
 // Đăng ký slide
-window.slideManager.addSlide(new Slide3());
+window.slideManager.addSlide(new LivestockSlide());

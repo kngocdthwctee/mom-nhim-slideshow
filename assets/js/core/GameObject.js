@@ -32,7 +32,6 @@ class GameObject {
      * Calculate screen X position with scrolling
      * @param {number} scrollOffset - Camera scroll offset
      * @param {number} canvasWidth - Canvas width
-     * @param {number} loopWidth - Width for wrapping
      * @returns {number|null} Screen X position or null if off-screen
      */
     getScreenX(scrollOffset, canvasWidth) {

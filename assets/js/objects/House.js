@@ -33,18 +33,13 @@ class House extends GameObject {
         ctx.restore();
     }
 
-    // Override generic hitbox if needed, but basic size-based box might be too square for a wide house?
-    // GameObject default hitbox uses this.size as width.
-    // House width = size * aspect.
-    // We should implement getHitboxWidth to return actual visual width.
+    onClick() {
+        this.showChat("Welcome to Mom & Nhím's House! 🏠", 3000);
+    }
 
     getHitboxWidth() {
         if (!this.image || !this.image.complete) return this.size;
         const aspect = this.image.width / this.image.height;
         return this.size * aspect;
-    }
-
-    onClick() {
-        this.showChat("Welcome to Mom & Nhím's House! 🏠", 3000);
     }
 }

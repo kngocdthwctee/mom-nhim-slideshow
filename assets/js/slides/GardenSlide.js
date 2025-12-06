@@ -3,10 +3,10 @@
  * Vẽ khu vườn với các cây mít, xoài, ổi và hiệu ứng huyền bí
  * Version: Updated Layout with New Trees (Mit, Sau Rieng)
  */
-class Slide2 extends BaseSlide {
+class GardenSlide extends BaseSlide {
     constructor() {
         super();
-        console.log('Slide2 initialized - New Trees Version');
+        console.log('GardenSlide initialized - New Trees Version');
         this.title = 'Khu vườn huyền bí phía sau';
         this.content = `
             <p>Phía sau là khu vườn Mom trồng riêng cho từng đứa: </p>
@@ -165,68 +165,6 @@ class Slide2 extends BaseSlide {
         // No need to sort here, will sort with trees together
     }
 
-    initFlowers() {
-        this.flowers = [];
-        const scale = Math.min(this.width, this.height) / 800;
-        const gardenHeight = 450 * scale;
-        const startY = this.height - gardenHeight;
-
-        for (let i = 0; i < 60; i++) {
-            this.flowers.push({
-                x: Math.random() * this.width,
-                y: startY + gardenHeight * 0.3 + Math.random() * (gardenHeight * 0.7),
-                size: 3 + Math.random() * 5,
-                color: Math.random() > 0.5 ? '#ff69b4' : '#ffff00',
-                type: Math.floor(Math.random() * 3)
-            });
-        }
-    }
-
-    initSparkles() {
-        this.sparkles = [];
-        for (let i = 0; i < 20; i++) {
-            this.sparkles.push({
-                x: Math.random() * this.width,
-                y: this.height - Math.random() * (this.height * 0.6),
-                size: Math.random() * 3,
-                maxSize: 2 + Math.random() * 3,
-                speed: 0.02 + Math.random() * 0.03,
-                phase: Math.random() * Math.PI * 2,
-                opacity: Math.random()
-            });
-        }
-    }
-
-    initFireflies() {
-        this.fireflies = [];
-        for (let i = 0; i < 30; i++) {
-            this.fireflies.push({
-                x: Math.random() * this.width,
-                y: Math.random() * this.height,
-                size: 2 + Math.random() * 3,
-                speedX: (Math.random() - 0.5) * 0.8,
-                speedY: (Math.random() - 0.5) * 0.8,
-                phase: Math.random() * Math.PI * 2
-            });
-        }
-    }
-
-    initLeaves() {
-        this.leaves = [];
-        for (let i = 0; i < 15; i++) {
-            this.leaves.push({
-                x: Math.random() * this.width,
-                y: -20 - Math.random() * 100,
-                rotation: Math.random() * Math.PI * 2,
-                rotationSpeed: (Math.random() - 0.5) * 0.05,
-                fallSpeed: 0.5 + Math.random() * 0.8,
-                wobble: Math.random() * Math.PI * 2,
-                size: 8 + Math.random() * 8,
-                type: Math.floor(Math.random() * 2) // 0: green, 1: slightly yellow
-            });
-        }
-    }
-
     onResize(width, height) {
         this.width = width;
         this.height = height;
@@ -268,115 +206,6 @@ class Slide2 extends BaseSlide {
         ctx.restore();
     }
 
-    drawMoon(ctx, timestamp, scale) {
-        const moonX = this.width * 0.85;
-        const moonY = this.height * 0.15;
-        const moonSize = 80 * scale;
-
-        // Moon glow
-        const glowSize = moonSize * 2.5;
-        const glow = ctx.createRadialGradient(moonX, moonY, 0, moonX, moonY, glowSize);
-        glow.addColorStop(0, 'rgba(255, 255, 220, 0.4)');
-        glow.addColorStop(0.5, 'rgba(255, 255, 220, 0.1)');
-        glow.addColorStop(1, 'transparent');
-        ctx.fillStyle = glow;
-        ctx.fillRect(moonX - glowSize, moonY - glowSize, glowSize * 2, glowSize * 2);
-
-        // Moon
-        ctx.beginPath();
-        ctx.arc(moonX, moonY, moonSize, 0, Math.PI * 2);
-        ctx.fillStyle = '#ffffe0';
-        ctx.fill();
-
-        // Moon craters
-        ctx.fillStyle = 'rgba(220, 220, 200, 0.6)';
-        ctx.beginPath();
-        ctx.arc(moonX - moonSize * 0.3, moonY - moonSize * 0.2, moonSize * 0.15, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(moonX + moonSize * 0.2, moonY + moonSize * 0.3, moonSize * 0.1, 0, Math.PI * 2);
-        ctx.fill();
-    }
-
-    drawFlowers(ctx, timestamp, scrollOffset) {
-        const sway = Math.sin(timestamp / 500) * 2;
-
-        this.flowers.forEach(flower => {
-            let screenX = flower.x - scrollOffset;
-            if (screenX < -50) screenX += this.loopWidth;
-            if (screenX > this.width + 50) screenX -= this.loopWidth;
-
-            if (screenX > -50 && screenX < this.width + 50) {
-                ctx.save();
-                ctx.translate(screenX + sway, flower.y);
-
-                // Stem
-                ctx.beginPath();
-                ctx.moveTo(0, 0);
-                ctx.lineTo(0, 10);
-                ctx.strokeStyle = '#006400';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-
-                // Petals
-                ctx.fillStyle = flower.color;
-                if (flower.type === 0) {
-                    ctx.beginPath();
-                    ctx.arc(0, 0, flower.size, 0, Math.PI * 2);
-                    ctx.fill();
-                } else if (flower.type === 1) {
-                    ctx.beginPath();
-                    for (let i = 0; i < 5; i++) {
-                        ctx.rotate(Math.PI * 2 / 5);
-                        ctx.lineTo(0, flower.size);
-                        ctx.lineTo(flower.size * 0.5, flower.size * 0.5);
-                    }
-                    ctx.fill();
-                } else {
-                    ctx.beginPath();
-                    ctx.arc(0, 0, flower.size, 0, Math.PI, false);
-                    ctx.fill();
-                }
-
-                ctx.restore();
-            }
-        });
-    }
-
-    drawTreeImages(ctx, scale, scrollOffset) {
-        this.trees.forEach(tree => {
-            const img = this.images[tree.type];
-            if (img && img.complete) {
-                let screenX = tree.x - scrollOffset;
-
-                // Wrap around
-                if (screenX < -tree.size) screenX += this.loopWidth;
-                if (screenX > this.width + tree.size) screenX -= this.loopWidth;
-
-                if (screenX > -tree.size && screenX < this.width + tree.size) {
-                    ctx.save();
-                    if (tree.flip) {
-                        ctx.translate(screenX + tree.size, tree.y);
-                        ctx.scale(-1, 1);
-                        this.drawSingleTree(ctx, img, 0, 0, tree.size);
-                    } else {
-                        this.drawSingleTree(ctx, img, screenX, tree.y, tree.size);
-                    }
-                    ctx.restore();
-                }
-            }
-        });
-    }
-
-    drawSingleTree(ctx, img, x, bottomY, size) {
-        const aspect = img.width / img.height;
-        const width = size * aspect;
-        const height = size;
-
-        // x is center, bottomY is bottom
-        ctx.drawImage(img, x - width / 2, bottomY - height, width, height);
-    }
-
     cleanup() {
         super.cleanup();
         if (this.canvas && this.handleCanvasClick) {
@@ -389,4 +218,4 @@ class Slide2 extends BaseSlide {
 }
 
 // Đăng ký slide
-window.slideManager.addSlide(new Slide2());
+window.slideManager.addSlide(new GardenSlide());
