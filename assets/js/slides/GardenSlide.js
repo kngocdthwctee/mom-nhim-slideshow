@@ -26,10 +26,10 @@ class Slide2 extends BaseSlide {
 
         // Character names corresponding to chr_0.png to chr_46.png
         this.characterNames = [
-            "Lez", "HLuan", "Tvy🌷", "ThTien", "tngyn", "anhPhong", "nno", "XThanh",
+            "Lez", "Tvy🌷", "HLuan", "ThTien", "tngyn", "anhPhong", "nno", "XThanh",
             "Pun", "qn🍧", "Bé5", "Dòi", "Táo", "Zin", "Bon🧊", "Ếch",
             "Xuyến", "Giang", "Nom", "NHND", "Anh3", "TuJuno", "TuấnL", "Tuấncon",
-            "Latuna", "ChịBi", "Chanh", "TP", "KennyPhong", "Lê Bảo", "VHieu", "empuu",
+            "Latuna", "ChịBi", "TP", "Chanh", "KennyPhong", "Lê Bảo", "VHieu", "empuu",
             "cớt🐷", "KVinh", "LPhi", "TiênNữ", "TThao", "qnhu✌️", "anhCá", "ThiSon",
             "L.ANH", "PNhi", "khoinguyen", "Chip", "pphhuy", "duke", "Mò"
         ];
@@ -376,150 +376,6 @@ class Slide2 extends BaseSlide {
 
         // x is center, bottomY is bottom
         ctx.drawImage(img, x - width / 2, bottomY - height, width, height);
-    }
-
-    drawCharacters(ctx, scale, scrollOffset) {
-        this.characters.forEach(char => {
-            const screenX = char.x - scrollOffset;
-
-            if (screenX > -char.size && screenX < this.width + char.size) {
-                const img = this.characterImages[char.imageIndex];
-
-                if (img && img.complete) {
-                    ctx.save();
-                    const aspect = img.width / img.height;
-                    const width = char.size * aspect;
-                    const height = char.size;
-
-                    ctx.drawImage(img, screenX - width / 2, char.y - height, width, height);
-                    ctx.restore();
-                }
-
-                this.drawCharacterName(ctx, char.name, screenX, char.y - char.size - 5, scale);
-            }
-        });
-    }
-
-    drawCharacterName(ctx, name, x, y, scale) {
-        ctx.save();
-        ctx.font = `bold ${12 * scale}px Arial`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'bottom';
-
-        const textWidth = ctx.measureText(name).width;
-        const padding = 4 * scale;
-
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-        ctx.beginPath();
-        ctx.roundRect(
-            x - textWidth / 2 - padding,
-            y - 18 * scale,
-            textWidth + padding * 2,
-            20 * scale,
-            3 * scale
-        );
-        ctx.fill();
-
-        ctx.fillStyle = '#fff';
-        ctx.fillText(name, x, y);
-
-        ctx.restore();
-    }
-
-    drawSparkles(ctx, timestamp, scale) {
-        this.sparkles.forEach(s => {
-            // Update
-            s.y -= s.speed * scale;
-            s.x += Math.sin(timestamp / 500 + s.phase) * 0.5;
-            if (s.y < 0) {
-                s.y = this.height;
-                s.x = Math.random() * this.width;
-            }
-
-            const twinkle = Math.abs(Math.sin(timestamp / 300 + s.phase));
-
-            ctx.save();
-            ctx.translate(s.x, s.y);
-            ctx.scale(twinkle, twinkle);
-
-            ctx.beginPath();
-            ctx.arc(0, 0, s.size * scale, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(255, 255, 255, ${s.opacity})`;
-            ctx.fill();
-
-            // Cross shape for larger sparkles
-            if (s.maxSize > 3) {
-                ctx.beginPath();
-                ctx.moveTo(-s.size * 2 * scale, 0);
-                ctx.lineTo(s.size * 2 * scale, 0);
-                ctx.moveTo(0, -s.size * 2 * scale);
-                ctx.lineTo(0, s.size * 2 * scale);
-                ctx.strokeStyle = `rgba(255, 255, 255, ${s.opacity * 0.8})`;
-                ctx.lineWidth = 1;
-                ctx.stroke();
-            }
-
-            ctx.restore();
-        });
-    }
-
-    drawFireflies(ctx, timestamp, scale) {
-        this.fireflies.forEach(ff => {
-            // Update position
-            ff.x += ff.speedX;
-            ff.y += ff.speedY;
-
-            // Bounce off edges
-            if (ff.x < 0 || ff.x > this.width) ff.speedX *= -1;
-            if (ff.y < 0 || ff.y > this.height) ff.speedY *= -1;
-
-            // Glow effect
-            const glow = Math.sin(timestamp / 300 + ff.phase) * 0.5 + 0.5;
-
-            // Draw firefly glow
-            const gradient = ctx.createRadialGradient(ff.x, ff.y, 0, ff.x, ff.y, ff.size * 4 * scale);
-            gradient.addColorStop(0, `rgba(200, 255, 100, ${glow})`);
-            gradient.addColorStop(0.5, `rgba(150, 255, 50, ${glow * 0.3})`);
-            gradient.addColorStop(1, 'transparent');
-
-            ctx.beginPath();
-            ctx.arc(ff.x, ff.y, ff.size * 4 * scale, 0, Math.PI * 2);
-            ctx.fillStyle = gradient;
-            ctx.fill();
-
-            // Core
-            ctx.beginPath();
-            ctx.arc(ff.x, ff.y, ff.size * 0.5 * scale, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(255, 255, 200, ${glow + 0.5})`;
-            ctx.fill();
-        });
-    }
-
-    drawLeaves(ctx, timestamp, scale) {
-        this.leaves.forEach(leaf => {
-            // Update position
-            leaf.y += leaf.fallSpeed * scale;
-            leaf.x += Math.sin(timestamp / 1000 + leaf.wobble) * 0.5;
-            leaf.rotation += leaf.rotationSpeed;
-
-            // Reset if off screen
-            if (leaf.y > this.height + 20) {
-                leaf.y = -20;
-                leaf.x = Math.random() * this.width;
-            }
-
-            // Draw leaf
-            ctx.save();
-            ctx.translate(leaf.x, leaf.y);
-            ctx.rotate(leaf.rotation);
-
-            ctx.beginPath();
-            ctx.ellipse(0, 0, leaf.size * scale, leaf.size / 2 * scale, 0, 0, Math.PI * 2);
-            ctx.fillStyle = leaf.type === 0 ? '#4a7c4a' : '#8b9d4a'; // Variation
-            ctx.fill();
-
-            ctx.restore();
-        });
     }
 
     cleanup() {

@@ -308,54 +308,6 @@ class Slide3 extends BaseSlide {
         });
     }
 
-    drawCharacters(ctx, scale, scrollOffset) {
-        this.characters.forEach(char => {
-            const screenX = char.x - scrollOffset;
-
-            if (screenX > -char.size && screenX < this.width + char.size) {
-                const img = this.characterImages[char.imageIndex];
-
-                if (img && img.complete) {
-                    ctx.save();
-                    const aspect = img.width / img.height;
-                    const width = char.size * aspect;
-                    const height = char.size;
-
-                    ctx.drawImage(img, screenX - width / 2, char.y - height, width, height);
-                    ctx.restore();
-                }
-
-                this.drawCharacterName(ctx, char.name, screenX, char.y - char.size - 5, scale);
-            }
-        });
-    }
-
-    drawCharacterName(ctx, name, x, y, scale) {
-        ctx.save();
-        ctx.font = `bold ${12 * scale}px Arial`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'bottom';
-
-        const textWidth = ctx.measureText(name).width;
-        const padding = 4 * scale;
-
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-        ctx.beginPath();
-        ctx.roundRect(
-            x - textWidth / 2 - padding,
-            y - 18 * scale,
-            textWidth + padding * 2,
-            20 * scale,
-            3 * scale
-        );
-        ctx.fill();
-
-        ctx.fillStyle = '#fff';
-        ctx.fillText(name, x, y);
-
-        ctx.restore();
-    }
-
     cleanup() {
         super.cleanup();
         if (this.canvas && this.handleCanvasClick) {

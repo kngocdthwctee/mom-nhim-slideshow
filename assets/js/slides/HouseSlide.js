@@ -29,7 +29,16 @@ class Slide1 extends BaseSlide {
         // Load house image
         this.houseImage.src = 'assets/images/house/house.png';
 
+        // Load character image (Nhím - Mom)
+        this.momImage = new Image();
+        this.momImage.src = 'assets/images/characters/chr_106.png';
+
         this.initHouses();
+        this.initCharacters();
+
+        // Add click handler for GameObjects
+        this.handleCanvasClick = this.handleCanvasClick.bind(this);
+        canvas.addEventListener('click', this.handleCanvasClick);
     }
 
     initHouses() {
@@ -40,40 +49,54 @@ class Slide1 extends BaseSlide {
         const groundY = this.height;
         const size = 800 * scale;
 
-        this.houses.push({
-            x: this.width / 2,
-            y: groundY,
-            size: size
-        });
+        // Create House object
+        const house = new House(this.width / 2, groundY, size, this.houseImage);
+        this.houses.push(house);
 
         // Set camera limits (can pan left/right a bit)
         this.maxCameraOffset = 300 * scale;
     }
 
-    initHearts() {
-        this.hearts = [];
-        for (let i = 0; i < 30; i++) {
-            this.hearts.push({
-                x: Math.random() * this.width,
-                y: this.height - Math.random() * this.height * 0.6,
-                size: 8 + Math.random() * 12,
-                floatSpeed: 0.3 + Math.random() * 0.5,
-                wobblePhase: Math.random() * Math.PI * 2,
-                opacity: 0.4 + Math.random() * 0.4
-            });
-        }
+    initCharacters() {
+        this.characters = [];
+        const scale = Math.min(this.width, this.height) / 800;
+        const groundY = this.height - 50 * scale; // Slightly above bottom
+        const size = 150 * scale;
+
+        // Add "Nhím - Mom" character
+        // Positioned slightly to the right of the house center
+        const x = this.width / 2 + 150 * scale;
+
+        // Character(x, y, size, name, image, flip)
+        // Passing array [momImage] and index 0 as simplistic way or just pass image if modified
+        // Wait, Character.js constructor takes (x, y, size, name, images, flip) where images is usually an array or object?
+        // Let's check Character.js constructor signature first.
+        // It takes (x, y, size, name, image, flip). image is a single Image object (from GardenSlide logic: this.characterImages[i]).
+
+        const momChar = new Character(x, groundY, size, "Nhím - Mom", this.momImage, false);
+        this.characters.push(momChar);
     }
 
-    initFlowers() {
-        this.flowers = [];
-        for (let i = 0; i < 40; i++) {
-            this.flowers.push({
-                x: Math.random() * this.width,
-                y: this.height - 80 - Math.random() * 150,
-                size: 4 + Math.random() * 6,
-                color: Math.random() > 0.5 ? '#ff69b4' : '#ffb6c1',
-                swayPhase: Math.random() * Math.PI * 2
-            });
+    /**
+     * Handle canvas click to detect object clicks
+     * @param {MouseEvent} e - Mouse event
+     */
+    handleCanvasClick(e) {
+        const rect = this.canvas.getBoundingClientRect();
+        const x = (e.clientX - rect.left) * (this.canvas.width / rect.width) / window.devicePixelRatio;
+        const y = (e.clientY - rect.top) * (this.canvas.height / rect.height) / window.devicePixelRatio;
+
+        const scale = Math.min(this.width, this.height) / 800;
+        const scrollOffset = Math.max(-this.maxCameraOffset, Math.min(this.maxCameraOffset, this.cameraX));
+        // Check all objects (reverse order to click frontmost first)
+        const allObjects = [...this.houses, ...this.characters];
+        for (let i = allObjects.length - 1; i >= 0; i--) {
+            const obj = allObjects[i];
+            const screenX = obj.getScreenX(scrollOffset, this.width, this.loopWidth);
+            if (screenX !== null && obj.isPointInside(x, y, screenX)) {
+                obj.onClick();
+                break; // Only trigger first clicked object
+            }
         }
     }
 
@@ -81,6 +104,7 @@ class Slide1 extends BaseSlide {
         this.width = width;
         this.height = height;
         this.initHouses();
+        this.initCharacters(); // Re-init characters on resize
         super.initSnowfall();
     }
 
@@ -101,8 +125,23 @@ class Slide1 extends BaseSlide {
 
         this.drawBackground(ctx, timestamp);
         this.drawGround(ctx, scale);
+
+        // Render houses first (background layer)
+        // this.drawHouses(ctx, scale, scrollOffset); <--- Remove this old call
+        if (this.houses) {
+            this.houses.forEach(house => {
+                house.render(ctx, scale, scrollOffset, this.width, null, timestamp);
+            });
+        }
+
+        // Render characters (middle layer)
+        if (this.characters) {
+            this.characters.forEach(char => {
+                char.render(ctx, scale, scrollOffset, this.width, null, timestamp);
+            });
+        }
+
         this.drawFence(ctx, scale, scrollOffset);
-        this.drawHouses(ctx, scale, scrollOffset);
         this.drawSnowfall(ctx, timestamp);
 
         ctx.restore();
@@ -112,91 +151,13 @@ class Slide1 extends BaseSlide {
         super.drawGround(ctx, scale, 'snow');
     }
 
-
-    drawFlowers(ctx, timestamp, scrollOffset) {
-        const sway = Math.sin(timestamp / 500) * 2;
-
-        this.flowers.forEach(flower => {
-            const screenX = flower.x - scrollOffset;
-
-            if (screenX > -50 && screenX < this.width + 50) {
-                ctx.save();
-                ctx.translate(screenX + sway, flower.y);
-
-                // Simple flower
-                ctx.fillStyle = flower.color;
-                ctx.beginPath();
-                ctx.arc(0, 0, flower.size, 0, Math.PI * 2);
-                ctx.fill();
-
-                // Stem
-                ctx.strokeStyle = '#4CAF50';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(0, 0);
-                ctx.lineTo(0, 10);
-                ctx.stroke();
-
-                ctx.restore();
-            }
-        });
-    }
-
-    drawHouses(ctx, scale, scrollOffset) {
-        this.houses.forEach(house => {
-            if (this.houseImage && this.houseImage.complete) {
-                const screenX = house.x - scrollOffset;
-
-                if (screenX > -house.size && screenX < this.width + house.size) {
-                    this.drawSingleHouse(ctx, screenX, house.y, house.size);
-                }
-            }
-        });
-    }
-
-    drawSingleHouse(ctx, x, bottomY, size) {
-        const img = this.houseImage;
-        const aspect = img.width / img.height;
-        const width = size * aspect;
-        const height = size;
-
-        // Add glow
-        ctx.save();
-        ctx.shadowColor = 'rgba(255, 255, 200, 0.3)';
-        ctx.shadowBlur = 30;
-        ctx.drawImage(img, x - width / 2, bottomY - height, width, height);
-        ctx.restore();
-    }
-
-    drawHearts(ctx, timestamp, scrollOffset) {
-        this.hearts.forEach(heart => {
-            const screenX = heart.x - scrollOffset;
-
-            if (screenX > -50 && screenX < this.width + 50) {
-                // Floating animation
-                const float = Math.sin(timestamp / 1000 + heart.wobblePhase) * 20;
-                const wobble = Math.sin(timestamp / 500 + heart.wobblePhase) * 5;
-
-                this.drawHeart(ctx, screenX + wobble, heart.y + float, heart.size, heart.opacity);
-            }
-        });
-    }
-
-    drawHeart(ctx, x, y, size, opacity) {
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.beginPath();
-        ctx.moveTo(0, size * 0.3);
-        ctx.bezierCurveTo(-size / 2, -size / 3, -size, size / 3, 0, size);
-        ctx.bezierCurveTo(size, size / 3, size / 2, -size / 3, 0, size * 0.3);
-        ctx.fillStyle = `rgba(255, 100, 120, ${opacity})`;
-        ctx.fill();
-        ctx.restore();
-    }
-
     cleanup() {
         super.cleanup();
         this.houses = [];
+        this.characters = [];
+        if (this.handleCanvasClick) {
+            this.canvas.removeEventListener('click', this.handleCanvasClick);
+        }
     }
 }
 
