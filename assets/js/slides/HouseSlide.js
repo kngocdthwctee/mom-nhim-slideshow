@@ -27,7 +27,7 @@ class Slide1 extends BaseSlide {
         super.initBase(canvas, ctx);
 
         // Load house image
-        this.houseImage.src = 'assets/images/house/house3.png';
+        this.houseImage.src = 'assets/images/house/house.png';
 
         this.initHouses();
     }
@@ -37,8 +37,8 @@ class Slide1 extends BaseSlide {
         const scale = Math.min(this.width, this.height) / 800;
 
         // Single centered house
-        const groundY = this.height - 100 * scale;
-        const size = 400 * scale;
+        const groundY = this.height;
+        const size = 800 * scale;
 
         this.houses.push({
             x: this.width / 2,

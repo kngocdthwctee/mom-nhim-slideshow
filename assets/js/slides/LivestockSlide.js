@@ -33,10 +33,10 @@ class Slide3 extends BaseSlide {
         super.initBase(canvas, ctx);
 
         // Load images
-        this.images.conga.src = 'assets/images/pen/conga.png';
-        this.images.conlon.src = 'assets/images/pen/conlon.png';
-        this.images.conbo.src = 'assets/images/pen/conbo.png';
-        this.images.contrau.src = 'assets/images/pen/contrau.png';
+        this.images.conga.src = 'assets/images/livestock/conga.png';
+        this.images.conlon.src = 'assets/images/livestock/conlon.png';
+        this.images.conbo.src = 'assets/images/livestock/conbo.png';
+        this.images.contrau.src = 'assets/images/livestock/contrau.png';
 
         this.initAnimals();
     }

@@ -18,6 +18,11 @@ class LiveStreamSlide extends BaseSlide {
         this.lastViewerUpdate = 0;
         this.giftViewerBoost = false;
         this.giftBoostStartTime = 0;
+        this.giftAudioTimeout = null;
+        this.giftVideoEnded = false;
+        this.giftAudioEnded = false;
+        this.fillerVideo = null;
+        this.showFillerVideo = false;
 
         // Disable camera panning for livestream
         this.cameraEnabled = false;
@@ -29,6 +34,7 @@ class LiveStreamSlide extends BaseSlide {
         this.initComments();
         this.initGiftVideo();
         this.initLivestreamVideo();
+        this.initFillerVideo();
         this.initGiftAudio();
         this.maxCameraOffset = 0;
     }
@@ -38,18 +44,14 @@ class LiveStreamSlide extends BaseSlide {
         this.giftVideo.src = 'assets/videos/tiktokuniverse.mp4';
         this.giftVideo.style.display = 'none';
         this.giftVideo.muted = false;
+        this.giftVideo.volume = 0.5;
         this.giftVideo.loop = false;
         document.body.appendChild(this.giftVideo);
 
         this.giftVideo.addEventListener('ended', () => {
             this.showGiftEffect = false;
-            this.showReactions = true;
-            this.addGiftReactions();
-            if (this.livestreamVideo) this.livestreamVideo.play();
-            if (this.giftAudio) {
-                this.giftAudio.pause();
-                this.giftAudio.currentTime = 0;
-            }
+            this.giftVideoEnded = true;
+            this.checkResumelivestream();
         });
     }
 
@@ -58,18 +60,46 @@ class LiveStreamSlide extends BaseSlide {
         this.livestreamVideo.src = 'assets/videos/livestream.mp4';
         this.livestreamVideo.style.display = 'none';
         this.livestreamVideo.muted = false;
-        this.livestreamVideo.volume = 0.7;
+        this.livestreamVideo.volume = 0.5;
         this.livestreamVideo.loop = false;
         document.body.appendChild(this.livestreamVideo);
         this.livestreamVideo.play();
+
+        this.livestreamVideo.addEventListener('ended', () => {
+            this.showFillerVideo = true;
+            if (this.fillerVideo) this.fillerVideo.play();
+        });
+    }
+
+    initFillerVideo() {
+        this.fillerVideo = document.createElement('video');
+        this.fillerVideo.src = 'assets/videos/filler.mp4';
+        this.fillerVideo.style.display = 'none';
+        this.fillerVideo.muted = true;
+        this.fillerVideo.loop = true;
+        document.body.appendChild(this.fillerVideo);
     }
 
     initGiftAudio() {
         this.giftAudio = document.createElement('audio');
         this.giftAudio.src = 'assets/audio/gift-sound.mp3';
         this.giftAudio.style.display = 'none';
-        this.giftAudio.volume = 0.5;
+        this.giftAudio.volume = 1;
         document.body.appendChild(this.giftAudio);
+
+        this.giftAudio.addEventListener('ended', () => {
+            this.giftAudioEnded = true;
+            this.checkResumelivestream();
+        });
+    }
+
+    checkResumelivestream() {
+        // Only resume livestream when both giftVideo and giftAudio have ended
+        if (this.giftVideoEnded && this.giftAudioEnded) {
+            this.showReactions = true;
+            this.addGiftReactions();
+            if (this.livestreamVideo) this.livestreamVideo.play();
+        }
     }
 
     initComments() {
@@ -152,18 +182,24 @@ class LiveStreamSlide extends BaseSlide {
         if (this.slideStartTime === 0) this.slideStartTime = timestamp;
 
         const elapsed = timestamp - this.slideStartTime;
-        if (elapsed > 160000 && !this.giftEffectTriggered) {
+        if (elapsed > 130000 && !this.giftEffectTriggered) {
             this.giftEffectTriggered = true;
             this.showGiftEffect = true;
             this.giftViewerBoost = true;
             this.giftBoostStartTime = timestamp;
+            this.giftVideoEnded = false;
+            this.giftAudioEnded = false;
 
             if (this.livestreamVideo) this.livestreamVideo.pause();
             this.giftVideo.currentTime = 0;
             this.giftVideo.play();
+
+            // Play giftAudio after 3 seconds
             if (this.giftAudio) {
-                this.giftAudio.currentTime = 0;
-                this.giftAudio.play();
+                this.giftAudioTimeout = setTimeout(() => {
+                    this.giftAudio.currentTime = 0;
+                    this.giftAudio.play();
+                }, 8000);
             }
         }
 
@@ -171,6 +207,10 @@ class LiveStreamSlide extends BaseSlide {
 
         if (this.showGiftEffect) {
             this.drawGiftEffect(ctx, scale);
+        } else if (this.showFillerVideo) {
+            this.drawFillerVideo(ctx, scale);
+            this.drawLiveBadge(ctx, timestamp, fontScale);
+            this.drawCommentBox(ctx, timestamp, fontScale);
         } else {
             this.drawLivestreamVideo(ctx, scale);
             this.drawLiveBadge(ctx, timestamp, fontScale);
@@ -228,6 +268,34 @@ class LiveStreamSlide extends BaseSlide {
 
         this.drawAmbient(ctx, x, y, w, h);
         ctx.drawImage(this.livestreamVideo, x, y, w, h);
+        ctx.restore();
+    }
+
+    drawFillerVideo(ctx, scale) {
+        if (!this.fillerVideo || this.fillerVideo.readyState < 2) return;
+
+        ctx.save();
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, this.width, this.height);
+
+        const vAspect = this.fillerVideo.videoWidth / this.fillerVideo.videoHeight;
+        const cAspect = this.width / this.height;
+        let w, h, x, y;
+
+        if (vAspect > cAspect) {
+            w = this.width;
+            h = w / vAspect;
+            x = 0;
+            y = (this.height - h) / 2;
+        } else {
+            h = this.height;
+            w = h * vAspect;
+            x = (this.width - w) / 2;
+            y = 0;
+        }
+
+        this.drawAmbient(ctx, x, y, w, h);
+        ctx.drawImage(this.fillerVideo, x, y, w, h);
         ctx.restore();
     }
 
@@ -359,6 +427,14 @@ class LiveStreamSlide extends BaseSlide {
         this.lastViewerUpdate = 0;
         this.giftViewerBoost = false;
         this.giftBoostStartTime = 0;
+        this.giftVideoEnded = false;
+        this.giftAudioEnded = false;
+        this.showFillerVideo = false;
+
+        if (this.giftAudioTimeout) {
+            clearTimeout(this.giftAudioTimeout);
+            this.giftAudioTimeout = null;
+        }
 
         if (this.commentTimeouts) {
             this.commentTimeouts.forEach(timeout => clearTimeout(timeout));
@@ -370,6 +446,10 @@ class LiveStreamSlide extends BaseSlide {
             this.giftVideo.currentTime = 0;
         }
         if (this.livestreamVideo) this.livestreamVideo.pause();
+        if (this.fillerVideo) {
+            this.fillerVideo.pause();
+            this.fillerVideo.currentTime = 0;
+        }
         if (this.giftAudio) {
             this.giftAudio.pause();
             this.giftAudio.currentTime = 0;

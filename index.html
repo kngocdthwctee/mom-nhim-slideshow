@@ -14,6 +14,18 @@
 </head>
 
 <body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-content">
+            <h2 class="loading-title">🎀 Mom Nhím 🎀</h2>
+            <div class="loading-spinner">💖</div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar" style="width: 0%;">0%</div>
+            </div>
+            <p class="loading-text">Đang tải tài nguyên...</p>
+        </div>
+    </div>
+
     <!-- Background layers -->
     <div class="background-layer"></div>
     <div class="overlay"></div>
@@ -51,6 +63,7 @@
     </main>
 
     <!-- Scripts -->
+    <script src="assets/js/core/loader.js"></script>
     <script src="assets/js/core/SlideManager.js"></script>
     <script src="assets/js/core/BaseSlide.js"></script>
     <script src="assets/js/slides/HouseSlide.js"></script>
