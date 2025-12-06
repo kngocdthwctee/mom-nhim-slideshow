@@ -265,3 +265,18 @@ class BaseSlide {
         return Math.min(this.width, this.height) / 800;
     }
 }
+
+// Global merged character list
+BaseSlide.CHARACTER_NAMES = [
+    // Garden Originals (0-46)
+    "Lez", "Tvy🌷", "HLuan", "ThTien", "tngyn", "anhPhong", "nno", "XThanh",
+    "Pun", "qn🍧", "Bé5", "Dòi", "Táo", "Zin", "Bon🧊", "Ếch",
+    "Xuyến", "Giang", "Nom", "NHND", "Anh3", "TuJuno", "TuấnL", "Tuấncon",
+    "Latuna", "ChịBi", "TP", "Chanh", "KennyPhong", "Lê Bảo", "VHieu", "empuu",
+    "cớt🐷", "KVinh", "LPhi", "TiênNữ", "TThao", "qnhu✌️", "anhCá", "ThiSon",
+    "L.ANH", "PNhi", "khoinguyen", "Chip", "pphhuy", "duke", "Mò",
+    // Livestock Originals (47-66)
+    "Chii", "Ong🐝", "xh", "Salm", "Hhung", "TrieuNam", "Gnasche?", "chịTom",
+    "Ghost", "Chuột", "Tbien", "Louis", "Paw", "hphuc", "ThaoMy", "dabaly",
+    "Oni", "Star", "ĐLuận", "bé7"
+];

@@ -22,16 +22,15 @@ class LivestockSlide extends BaseSlide {
         this.characters = [];
         this.characterImages = [];
 
-        // Character names corresponding to chr_47.png to chr_92.png
-        this.characterNames = [
-            "Khánh", "Leobae", "Xương", "ChíVỹ", "HVĩ", "ChúcHà", "PDan", "Út iuuu",
-            "Cyshi", "Thuthu", "VũDương", "Triều", "btdung", "Cam", "TA", "emMy",
-            "TấnDũng", "NhânPhan", "Boo", "Rùa", "vson", "qminh", "lhuong", "Nhoxing",
-            "Chii", "Ong🐝", "xh", "Salm", "Hhung", "TrieuNam", "Gnasche?", "chịTom",
-            "Ghost", "Chuột", "Tbien", "Louis", "Paw", "hphuc", "ThaoMy", "dabaly",
-            "Oni", "Star", "ĐLuận", "bé7"
-        ];
-        this.startIndex = 47;
+        this.butterflies = [];
+        this.initButterflies();
+
+        // Global list split
+        const total = BaseSlide.CHARACTER_NAMES.length;
+        const splitIndex = Math.ceil(total / 2);
+
+        this.startIndex = splitIndex;
+        this.characterNames = BaseSlide.CHARACTER_NAMES.slice(splitIndex);
 
         // Images
         this.images = {
@@ -43,6 +42,9 @@ class LivestockSlide extends BaseSlide {
     }
 
     init(canvas, ctx) {
+        // Load character images first to prevent errors in onResize
+        this.loadCharacterImages();
+
         super.initBase(canvas, ctx);
 
         // Load images
@@ -51,7 +53,6 @@ class LivestockSlide extends BaseSlide {
         this.images.conbo.src = 'assets/images/livestock/conbo.png';
         this.images.contrau.src = 'assets/images/livestock/contrau.png';
 
-        this.loadCharacterImages();
         this.initAnimals();
         this.initCharacters();
 
@@ -69,7 +70,6 @@ class LivestockSlide extends BaseSlide {
         const x = (e.clientX - rect.left) * (this.canvas.width / rect.width) / window.devicePixelRatio;
         const y = (e.clientY - rect.top) * (this.canvas.height / rect.height) / window.devicePixelRatio;
 
-        const scale = Math.min(this.width, this.height) / 800;
         const scrollOffset = Math.max(-this.maxCameraOffset, Math.min(this.maxCameraOffset, this.cameraX));
 
         // Check all objects (reverse order to click frontmost first)
@@ -87,7 +87,7 @@ class LivestockSlide extends BaseSlide {
 
     initAnimals() {
         this.animals = [];
-        const scale = Math.min(this.width, this.height) / 800;
+        const scale = this.getScale();
 
         // Set camera limits (Expanded map size)
         this.maxCameraOffset = 2500 * scale; // Increased from 400 to 2500
@@ -134,7 +134,7 @@ class LivestockSlide extends BaseSlide {
 
     initCharacters() {
         this.characters = [];
-        const scale = Math.min(this.width, this.height) / 800;
+        const scale = this.getScale();
 
         const groundY = this.height - 100 * scale;
         const charSize = 120 * scale;

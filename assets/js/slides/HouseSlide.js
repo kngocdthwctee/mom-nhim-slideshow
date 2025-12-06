@@ -67,12 +67,6 @@ class HouseSlide extends BaseSlide {
         // Positioned slightly to the right of the house center
         const x = this.width / 2 + 150 * scale;
 
-        // Character(x, y, size, name, image, flip)
-        // Passing array [momImage] and index 0 as simplistic way or just pass image if modified
-        // Wait, Character.js constructor takes (x, y, size, name, images, flip) where images is usually an array or object?
-        // Let's check Character.js constructor signature first.
-        // It takes (x, y, size, name, image, flip). image is a single Image object (from GardenSlide logic: this.characterImages[i]).
-
         const momChar = new Character(x, groundY, size, this.momImage, "Nhím - Mom");
         this.characters.push(momChar);
     }

@@ -24,15 +24,10 @@ class GardenSlide extends BaseSlide {
         this.characters = [];
         this.characterImages = [];
 
-        // Character names corresponding to chr_0.png to chr_46.png
-        this.characterNames = [
-            "Lez", "Tvy🌷", "HLuan", "ThTien", "tngyn", "anhPhong", "nno", "XThanh",
-            "Pun", "qn🍧", "Bé5", "Dòi", "Táo", "Zin", "Bon🧊", "Ếch",
-            "Xuyến", "Giang", "Nom", "NHND", "Anh3", "TuJuno", "TuấnL", "Tuấncon",
-            "Latuna", "ChịBi", "TP", "Chanh", "KennyPhong", "Lê Bảo", "VHieu", "empuu",
-            "cớt🐷", "KVinh", "LPhi", "TiênNữ", "TThao", "qnhu✌️", "anhCá", "ThiSon",
-            "L.ANH", "PNhi", "khoinguyen", "Chip", "pphhuy", "duke", "Mò"
-        ];
+        // Global list split
+        const total = BaseSlide.CHARACTER_NAMES.length;
+        const splitIndex = Math.ceil(total / 2);
+        this.characterNames = BaseSlide.CHARACTER_NAMES.slice(0, splitIndex);
 
         // Images
         this.images = {
@@ -47,9 +42,12 @@ class GardenSlide extends BaseSlide {
     }
 
     init(canvas, ctx) {
+        // Load character images first (so onResize logic works if called)
+        this.loadCharacterImages();
+
         super.initBase(canvas, ctx);
 
-        // Load images
+        // Load asset images
         this.images.cayoi.src = 'assets/images/garden/cayoi.png';
         this.images.cayxoai.src = 'assets/images/garden/cayxoai.png';
         this.images.caymit.src = 'assets/images/garden/caymit.png';
@@ -58,7 +56,6 @@ class GardenSlide extends BaseSlide {
         this.images.caycam.src = 'assets/images/garden/caycam.png';
         this.images.caytao.src = 'assets/images/garden/caytao.png';
 
-        this.loadCharacterImages();
         this.initTrees();
         this.initCharacters();
 
