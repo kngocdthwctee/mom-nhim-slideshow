@@ -66,8 +66,17 @@ class LiveStreamSlide extends BaseSlide {
         this.livestreamVideo.play();
 
         this.livestreamVideo.addEventListener('ended', () => {
-            this.showFillerVideo = true;
-            if (this.fillerVideo) this.fillerVideo.play();
+            // Only switch to filler when video has enough data loaded
+            if (this.fillerVideo && this.fillerVideo.readyState >= 3) {
+                this.showFillerVideo = true;
+                this.fillerVideo.play();
+            } else if (this.fillerVideo) {
+                // If not ready, wait for it
+                this.fillerVideo.addEventListener('canplay', () => {
+                    this.showFillerVideo = true;
+                    this.fillerVideo.play();
+                }, { once: true });
+            }
         });
     }
 
@@ -77,7 +86,9 @@ class LiveStreamSlide extends BaseSlide {
         this.fillerVideo.style.display = 'none';
         this.fillerVideo.muted = true;
         this.fillerVideo.loop = true;
+        this.fillerVideo.preload = 'auto';
         document.body.appendChild(this.fillerVideo);
+        this.fillerVideo.load();
     }
 
     initGiftAudio() {
