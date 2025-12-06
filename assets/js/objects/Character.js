@@ -16,6 +16,37 @@ class Character extends GameObject {
     }
 
     /**
+     * Get random chat message for characters
+     * @returns {string} Random message
+     */
+    static getRandomMessage() {
+        const messages = [
+            "Chào bạn! 👋",
+            "Hôm nay thật đẹp trời! ☀️",
+            "Mình đang bận quá! 😅",
+            "Được nghỉ rồi! 🎉",
+            "Đi chơi không? 🎈",
+            "Mệt quá! 😴",
+            "Vui quá! 😊",
+            "Làm gì thế?  🤔",
+            "Ăn gì đây? 🍰",
+            "Tuyệt vời! ⭐",
+            "Hehe 😄",
+            "À... 😯",
+            "Ồ! 😲",
+            "Được rồi! 👍"
+        ];
+        return messages[Math.floor(Math.random() * messages.length)];
+    }
+
+    /**
+     * Handle click on character
+     */
+    onClick() {
+        this.showChat(Character.getRandomMessage(), 5000);
+    }
+
+    /**
      * Render the character with their name
      * @param {CanvasRenderingContext2D} ctx - Canvas context
      * @param {number} scale - Scale factor
@@ -39,6 +70,9 @@ class Character extends GameObject {
 
         // Draw character name
         this.drawName(ctx, screenX, scale);
+
+        // Draw chat bubble if active
+        this.drawChatBubble(ctx, screenX, scale);
     }
 
     /**

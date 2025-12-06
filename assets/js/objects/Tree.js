@@ -18,6 +18,32 @@ class Tree extends GameObject {
     }
 
     /**
+     * Get random chat message for trees
+     * @returns {string} Random message
+     */
+    static getRandomMessage() {
+        const messages = [
+            "Xào xạc... xào xạc... 🍃",
+            "Trồng cây trọng đức! 🌳",
+            "Nắng quá! ☀️",
+            "Mưa rôi! 🌧️",
+            "Quang hợp tổng hợp! 🌱",
+            "Cho em xin một chai nước...",
+            "Qua năm này em trái nhiều lắm! 🍎",
+            "Em xanh tốt đây! 💚",
+            "Không chặt cây! 🚫🪓"
+        ];
+        return messages[Math.floor(Math.random() * messages.length)];
+    }
+
+    /**
+     * Handle click on tree
+     */
+    onClick() {
+        this.showChat(Tree.getRandomMessage(), 5000);
+    }
+
+    /**
      * Render the tree
      * @param {CanvasRenderingContext2D} ctx - Canvas context
      * @param {number} scale - Scale factor
@@ -44,6 +70,9 @@ class Tree extends GameObject {
         }
 
         ctx.restore();
+
+        // Draw chat bubble if active
+        this.drawChatBubble(ctx, screenX, scale);
     }
 
     /**

@@ -20,6 +20,33 @@ class Animal extends GameObject {
     }
 
     /**
+     * Get random chat message for animals
+     * @returns {string} Random message
+     */
+    static getRandomMessage() {
+        const messages = [
+            "Ụ ục ục... 🐷",
+            "Meo meo! 🐱",
+            "Gá gà gò gò! 🐓",
+            "Dùi dùi! 🐄",
+            "Đói bụng rồi! 🍽️",
+            "Cho em ăn nào! 🤤",
+            "Mệt quá! 😴",
+            "Vui quá! 🥳",
+            "Nghỉ thôi... 😴",
+            "Chơi cùng với! 🥰"
+        ];
+        return messages[Math.floor(Math.random() * messages.length)];
+    }
+
+    /**
+     * Handle click on animal
+     */
+    onClick() {
+        this.showChat(Animal.getRandomMessage(), 5000);
+    }
+
+    /**
      * Render the animal with bobbing animation
      * @param {CanvasRenderingContext2D} ctx - Canvas context
      * @param {number} scale - Scale factor
@@ -49,6 +76,9 @@ class Animal extends GameObject {
         }
 
         ctx.restore();
+
+        // Draw chat bubble if active
+        this.drawChatBubble(ctx, screenX, scale);
     }
 
     /**

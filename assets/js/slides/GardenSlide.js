@@ -59,6 +59,34 @@ class Slide2 extends BaseSlide {
         this.loadCharacterImages();
         this.initTrees();
         this.initCharacters();
+
+        // Add click handler for GameObjects
+        this.handleCanvasClick = this.handleCanvasClick.bind(this);
+        canvas.addEventListener('click', this.handleCanvasClick);
+    }
+
+    /**
+     * Handle canvas click to detect object clicks
+     * @param {MouseEvent} e - Mouse event
+     */
+    handleCanvasClick(e) {
+        const rect = this.canvas.getBoundingClientRect();
+        const x = (e.clientX - rect.left) * (this.canvas.width / rect.width) / window.devicePixelRatio;
+        const y = (e.clientY - rect.top) * (this.canvas.height / rect.height) / window.devicePixelRatio;
+
+        const scale = Math.min(this.width, this.height) / 800;
+        const scrollOffset = Math.max(-this.maxCameraOffset, Math.min(this.maxCameraOffset, this.cameraX));
+
+        // Check all objects (reverse order to click frontmost first)
+        const allObjects = [...this.characters, ...this.trees];
+        for (let i = allObjects.length - 1; i >= 0; i--) {
+            const obj = allObjects[i];
+            const screenX = obj.getScreenX(scrollOffset, this.width, this.loopWidth);
+            if (screenX !== null && obj.isPointInside(x, y, screenX)) {
+                obj.onClick();
+                break; // Only trigger first clicked object
+            }
+        }
     }
 
     initTrees() {
@@ -492,6 +520,9 @@ class Slide2 extends BaseSlide {
 
     cleanup() {
         super.cleanup();
+        if (this.canvas && this.handleCanvasClick) {
+            this.canvas.removeEventListener('click', this.handleCanvasClick);
+        }
         this.trees = [];
         this.characters = [];
     }
