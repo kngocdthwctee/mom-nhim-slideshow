@@ -74,6 +74,7 @@ class LivestockSlide extends BaseSlide {
 
         // Check all objects (reverse order to click frontmost first)
         const allObjects = [...this.characters, ...this.animals];
+        allObjects.sort((a, b) => a.getDepth() - b.getDepth());
         for (let i = allObjects.length - 1; i >= 0; i--) {
             const obj = allObjects[i];
             const screenX = obj.getScreenX(scrollOffset, this.width);
@@ -202,7 +203,7 @@ class LivestockSlide extends BaseSlide {
 
     render(timestamp) {
         const ctx = this.ctx;
-        const scale = Math.min(this.width, this.height) / 800;
+        const scale = this.getScale();
 
         // Apply camera limits
         if (this.cameraX < -this.maxCameraOffset) this.cameraX = -this.maxCameraOffset;

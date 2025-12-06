@@ -184,7 +184,7 @@ class LiveStreamSlide extends BaseSlide {
 
     render(timestamp) {
         const ctx = this.ctx;
-        const scale = Math.min(this.width, this.height) / 800;
+        const scale = this.getScale();
 
         // Mobile font multiplier - increase font size on small screens
         const isMobile = this.width < 600;

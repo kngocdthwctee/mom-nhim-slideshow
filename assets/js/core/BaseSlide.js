@@ -257,4 +257,11 @@ class BaseSlide {
     cleanup() {
         this.cleanupBase();
     }
+    /**
+     * Get global scale factor based on screen size
+     * @returns {number} Scale factor
+     */
+    getScale() {
+        return Math.min(this.width, this.height) / 800;
+    }
 }

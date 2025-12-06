@@ -41,7 +41,8 @@ class GardenSlide extends BaseSlide {
             caymit: new Image(),
             caysaurieng: new Image(),
             caychuoi: new Image(),
-            caycam: new Image()
+            caycam: new Image(),
+            caytao: new Image()
         };
     }
 
@@ -55,6 +56,7 @@ class GardenSlide extends BaseSlide {
         this.images.caysaurieng.src = 'assets/images/garden/caysaurieng.png';
         this.images.caychuoi.src = 'assets/images/garden/caychuoi.png';
         this.images.caycam.src = 'assets/images/garden/caycam.png';
+        this.images.caytao.src = 'assets/images/garden/caytao.png';
 
         this.loadCharacterImages();
         this.initTrees();
@@ -78,6 +80,7 @@ class GardenSlide extends BaseSlide {
 
         // Check all objects (reverse order to click frontmost first)
         const allObjects = [...this.characters, ...this.trees];
+        allObjects.sort((a, b) => a.getDepth() - b.getDepth());
         for (let i = allObjects.length - 1; i >= 0; i--) {
             const obj = allObjects[i];
             const screenX = obj.getScreenX(scrollOffset, this.width);
@@ -90,13 +93,13 @@ class GardenSlide extends BaseSlide {
 
     initTrees() {
         this.trees = [];
-        const scale = Math.min(this.width, this.height) / 800;
+        const scale = this.getScale();
 
         // Set camera limits (Expanded map size)
         this.maxCameraOffset = 2500 * scale; // Increased from 400 to 2500
 
         const groundY = this.height - 100 * scale;
-        const treeTypes = ['caymit', 'cayxoai', 'caysaurieng', 'cayoi', 'caychuoi', 'caycam'];
+        const treeTypes = ['caymit', 'cayxoai', 'caysaurieng', 'cayoi', 'caychuoi', 'caycam', 'caytao'];
 
         // Increase number of trees for larger map
         const numTrees = 20;
@@ -130,7 +133,7 @@ class GardenSlide extends BaseSlide {
 
     initCharacters() {
         this.characters = [];
-        const scale = Math.min(this.width, this.height) / 800;
+        const scale = this.getScale();
 
         const groundY = this.height - 100 * scale;
         const charSize = 120 * scale;
@@ -175,7 +178,7 @@ class GardenSlide extends BaseSlide {
 
     render(timestamp) {
         const ctx = this.ctx;
-        const scale = Math.min(this.width, this.height) / 800;
+        const scale = this.getScale();
 
         // Apply camera limits
         if (this.cameraX < -this.maxCameraOffset) this.cameraX = -this.maxCameraOffset;

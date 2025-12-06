@@ -14,23 +14,44 @@ class Tree extends GameObject {
         super(x, y, size, images[type]);
         this.type = type;
         this.flip = flip;
+
+        // Gift logic
+        this.giftImage = new Image();
+        this.giftActive = false;
+        this.giftY = 0;
+        this.giftOpacity = 0;
+        this.giftStartTime = 0;
+
+        const giftMap = {
+            'cayoi': 'quaoi.png',
+            'cayxoai': 'quaxoai.png',
+            'caychuoi': 'naichuoi.png',
+            'caymit': 'quamit.png',
+            'caycam': 'quacam.png',
+            'caysaurieng': 'quasaurieng.png',
+            'caytao': 'quatao.png'
+        };
+
+        if (giftMap[type]) {
+            this.giftImage.src = `assets/images/fruits/${giftMap[type]}`;
+        }
+    }
+
+    getDepth() {
+        return this.y;
     }
 
     /**
      * Get random chat message for trees
-     * @returns {string} Random message
      */
     static getRandomMessage() {
         const messages = [
-            "Xào xạc... xào xạc... 🍃",
-            "Trồng cây trọng đức! 🌳",
-            "Nắng quá! ☀️",
-            "Mưa rôi! 🌧️",
-            "Quang hợp tổng hợp! 🌱",
-            "Cho em xin một chai nước...",
-            "Qua năm này em trái nhiều lắm! 🍎",
-            "Em xanh tốt đây! 💚",
-            "Không chặt cây! 🚫🪓"
+            "Rì rào... Rì rào...",
+            "Gió mát quá! 🍃",
+            "Cây này do Mom trồng đó!",
+            "Lớn nhanh nào!",
+            "Xào xạc... Xào xạc...",
+            "Chào bạn nhỏ! 👋"
         ];
         return messages[Math.floor(Math.random() * messages.length)];
     }
@@ -39,7 +60,19 @@ class Tree extends GameObject {
      * Handle click on tree
      */
     onClick() {
-        this.showChat(Tree.getRandomMessage(), 5000);
+        // 10% chance to drop gift
+        if (Math.random() < 0.1 && this.giftImage.complete && this.giftImage.width > 0) {
+            this.activateGift();
+        } else {
+            this.showChat(Tree.getRandomMessage(), 5000);
+        }
+    }
+
+    activateGift() {
+        this.giftActive = true;
+        this.giftY = this.y - this.size * 0.8; // Start from tree canopy
+        this.giftOpacity = 1;
+        this.giftStartTime = Date.now();
     }
 
     /**
@@ -58,8 +91,45 @@ class Tree extends GameObject {
 
         this.drawTree(ctx, this.image, screenX, this.y, this.flip);
 
+        // Draw gift if active
+        if (this.giftActive) {
+            this.drawGift(ctx, screenX, scale);
+        }
+
         // Draw chat bubble if active
         this.drawChatBubble(ctx, screenX, scale);
+    }
+
+    drawGift(ctx, x, scale) {
+        const elapsed = Date.now() - this.giftStartTime;
+        const duration = 2000;
+
+        if (elapsed > duration) {
+            this.giftActive = false;
+            return;
+        }
+
+        // Animation: Float up and fade out
+        const progress = elapsed / duration;
+        const floatUp = progress * 100 * scale;
+        this.giftOpacity = 1 - Math.pow(progress, 3); // Ease out fade
+
+        const giftSize = 60 * scale;
+        const currentY = this.giftY - floatUp;
+
+        ctx.save();
+        ctx.globalAlpha = this.giftOpacity;
+
+        // Draw glow behind gift
+        ctx.shadowColor = '#ffff00';
+        ctx.shadowBlur = 20 * scale;
+
+        const aspect = this.giftImage.width / this.giftImage.height;
+        const width = giftSize * aspect;
+
+        ctx.drawImage(this.giftImage, x - width / 2, currentY - giftSize / 2, width, giftSize);
+
+        ctx.restore();
     }
 
     /**

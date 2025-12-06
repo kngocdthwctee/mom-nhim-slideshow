@@ -96,7 +96,7 @@ class ChristmasSlide extends BaseSlide {
         // ctx.clearRect(0, 0, this.width, this.height); // Handled by SlideManager
 
         // Calculate scale factor
-        const scale = Math.min(this.width, this.height) / 800;
+        const scale = this.getScale();
 
         // Camera control with limits
         if (this.cameraX < -this.maxCameraOffset) this.cameraX = -this.maxCameraOffset;

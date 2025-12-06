@@ -37,9 +37,5 @@ class House extends GameObject {
         this.showChat("Welcome to Mom & Nhím's House! 🏠", 3000);
     }
 
-    getHitboxWidth() {
-        if (!this.image || !this.image.complete) return this.size;
-        const aspect = this.image.width / this.image.height;
-        return this.size * aspect;
-    }
+
 }

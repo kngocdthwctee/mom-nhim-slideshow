@@ -94,6 +94,10 @@ class GameObject {
      * Subclasses can override this if their visual width != size
      */
     getHitboxWidth() {
+        if (this.image && this.image.complete && this.image.height > 0) {
+            const aspect = this.image.width / this.image.height;
+            return this.size * aspect;
+        }
         return this.size;
     }
 

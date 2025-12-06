@@ -43,7 +43,7 @@ class HouseSlide extends BaseSlide {
 
     initHouses() {
         this.houses = [];
-        const scale = Math.min(this.width, this.height) / 800;
+        const scale = this.getScale();
 
         // Single centered house
         const groundY = this.height;
@@ -59,7 +59,7 @@ class HouseSlide extends BaseSlide {
 
     initCharacters() {
         this.characters = [];
-        const scale = Math.min(this.width, this.height) / 800;
+        const scale = this.getScale();
         const groundY = this.height - 50 * scale; // Slightly above bottom
         const size = 150 * scale;
 
@@ -89,6 +89,7 @@ class HouseSlide extends BaseSlide {
         const scrollOffset = Math.max(-this.maxCameraOffset, Math.min(this.maxCameraOffset, this.cameraX));
         // Check all objects (reverse order to click frontmost first)
         const allObjects = [...this.houses, ...this.characters];
+        // allObjects.sort((a, b) => a.getDepth() - b.getDepth());
         for (let i = allObjects.length - 1; i >= 0; i--) {
             const obj = allObjects[i];
             const screenX = obj.getScreenX(scrollOffset, this.width);
@@ -109,7 +110,7 @@ class HouseSlide extends BaseSlide {
 
     render(timestamp) {
         const ctx = this.ctx;
-        const scale = Math.min(this.width, this.height) / 800;
+        const scale = this.getScale();
 
         // Camera control with limits
         if (this.cameraX < -this.maxCameraOffset) this.cameraX = -this.maxCameraOffset;
