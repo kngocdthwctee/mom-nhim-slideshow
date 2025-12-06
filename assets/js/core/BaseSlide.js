@@ -228,6 +228,61 @@ class BaseSlide {
         });
     }
 
+    /**
+     * Draw a single character with their name
+     * @param {CanvasRenderingContext2D} ctx - Canvas context
+     * @param {Image} img - Character image
+     * @param {number} x - Screen X position (center)
+     * @param {number} y - Bottom Y position
+     * @param {number} size - Character size
+     * @param {string} name - Character name
+     * @param {number} scale - Scale factor
+     */
+    drawCharacter(ctx, img, x, y, size, name, scale) {
+        if (!img || !img.complete) return;
+
+        const aspect = img.width / img.height;
+        const width = size * aspect;
+        const height = size;
+
+        ctx.drawImage(img, x - width / 2, y - height, width, height);
+        this.drawCharacterName(ctx, name, x, y - size - 5, scale);
+    }
+
+    /**
+     * Draw character name with background
+     * @param {CanvasRenderingContext2D} ctx - Canvas context
+     * @param {string} name - Character name
+     * @param {number} x - Center X position
+     * @param {number} y - Bottom Y position
+     * @param {number} scale - Scale factor
+     */
+    drawCharacterName(ctx, name, x, y, scale) {
+        ctx.save();
+        ctx.font = `bold ${12 * scale}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+
+        const textWidth = ctx.measureText(name).width;
+        const padding = 4 * scale;
+
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.beginPath();
+        ctx.roundRect(
+            x - textWidth / 2 - padding,
+            y - 18 * scale,
+            textWidth + padding * 2,
+            20 * scale,
+            3 * scale
+        );
+        ctx.fill();
+
+        ctx.fillStyle = '#fff';
+        ctx.fillText(name, x, y);
+
+        ctx.restore();
+    }
+
     cleanupBase() {
         // Remove event listeners
         if (this.canvas) {

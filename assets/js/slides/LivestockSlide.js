@@ -192,13 +192,7 @@ class Slide3 extends BaseSlide {
                 const screenX = char.x - scrollOffset;
                 if (screenX > -char.size && screenX < this.width + char.size) {
                     const img = this.characterImages[char.imageIndex];
-                    if (img && img.complete) {
-                        const aspect = img.width / img.height;
-                        const width = char.size * aspect;
-                        const height = char.size;
-                        ctx.drawImage(img, screenX - width / 2, char.y - height, width, height);
-                    }
-                    this.drawCharacterName(ctx, char.name, screenX, char.y - char.size - 5, scale);
+                    this.drawCharacter(ctx, img, screenX, char.y, char.size, char.name, scale);
                 }
             } else {
                 const animal = obj.data;
