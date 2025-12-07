@@ -1,6 +1,7 @@
 class House extends GameObject {
-    constructor(x, y, size, image) {
+    constructor(x, y, size, image, owner) {
         super(x, y, size, image);
+        this.owner = owner;
     }
 
     render(ctx, scale, scrollOffset, canvasWidth, timestamp) {
@@ -34,7 +35,9 @@ class House extends GameObject {
     }
 
     onClick() {
-        this.showChat("Welcome to Mom & Nhím's House! 🏠", 3000);
+        if (this.owner) {
+            this.owner.showChat("Nhà này là của mum, không ai được động vào đây", 3000);
+        }
     }
 
 

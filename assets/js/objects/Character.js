@@ -9,40 +9,64 @@ class Character extends GameObject {
      * @param {Image} image - Character image
      * @param {string} name - Character name
      */
-    constructor(x, y, size, image, name) {
+    constructor(x, y, size, image, name, messages, giftMessages = [], noGiftMessages = []) {
         super(x, y, size, image);
         this.name = name;
+        this.messages = messages;
+        this.giftMessages = giftMessages;
+        this.noGiftMessages = noGiftMessages;
+        this.targetX = x;
+        this.targetY = y;
+        this.isMoving = false;
+        this.lastTimestamp = 0;
     }
 
     /**
      * Get random chat message for characters
      * @returns {string} Random message
      */
-    static getRandomMessage() {
-        const messages = [
-            "Chào bạn! 👋",
-            "Hôm nay thật đẹp trời! ☀️",
-            "Mình đang bận quá! 😅",
-            "Được nghỉ rồi! 🎉",
-            "Đi chơi không? 🎈",
-            "Mệt quá! 😴",
-            "Vui quá! 😊",
-            "Làm gì thế?  🤔",
-            "Ăn gì đây? 🍰",
-            "Tuyệt vời! ⭐",
-            "Hehe 😄",
-            "À... 😯",
-            "Ồ! 😲",
-            "Được rồi! 👍"
-        ];
-        return messages[Math.floor(Math.random() * messages.length)];
+    getRandomMessage() {
+        if (!this.messages || this.messages.length === 0) return "...";
+        return this.messages[Math.floor(Math.random() * this.messages.length)];
     }
 
     /**
      * Handle click on character
      */
     onClick() {
-        this.showChat(Character.getRandomMessage(), 5000);
+        this.showChat(this.getRandomMessage(), 5000);
+    }
+
+    /**
+     * Move character to specific position
+     * @param {number} x - Target X
+     * @param {number} y - Target Y
+     */
+    moveTo(x, y) {
+        this.targetX = x;
+        this.targetY = y;
+        this.isMoving = true;
+    }
+
+    treeOnClick(tree) {
+        // Calculate safe position relative to size
+        // Stand slightly to the left and in front (lower Y)
+        const targetX = tree.x - this.size * 0.5;
+        const targetY = tree.y + this.size * 0.2;
+
+        this.moveTo(targetX, targetY);
+
+        // 10% chance to drop gift
+        if (Math.random() < 0.1) {
+            tree.activateGift();
+            if (this.giftMessages && this.giftMessages.length > 0) {
+                this.showChat(this.giftMessages[Math.floor(Math.random() * this.giftMessages.length)], 5000);
+            }
+        } else {
+            if (this.noGiftMessages && this.noGiftMessages.length > 0) {
+                this.showChat(this.noGiftMessages[Math.floor(Math.random() * this.noGiftMessages.length)], 5000);
+            }
+        }
     }
 
     /**
@@ -51,9 +75,39 @@ class Character extends GameObject {
      * @param {number} scale - Scale factor
      * @param {number} scrollOffset - Camera scroll offset
      * @param {number} canvasWidth - Canvas width
-     * @param {number} timestamp - Animation timestamp (unused)
+     * @param {number} timestamp - Animation timestamp
      */
     render(ctx, scale, scrollOffset, canvasWidth, timestamp) {
+        // Handle movement
+        if (!this.lastTimestamp) this.lastTimestamp = timestamp;
+        const dt = Math.min((timestamp - this.lastTimestamp) / 1000, 0.1); // Cap dt at 0.1s
+        this.lastTimestamp = timestamp;
+
+        if (this.isMoving) {
+            const dx = this.targetX - this.x;
+            const dy = this.targetY - this.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < 5) {
+                this.x = this.targetX;
+                this.y = this.targetY;
+                this.isMoving = false;
+            } else {
+                const speed = 500 * scale; // pixels per second
+                const moveDist = speed * dt;
+
+                if (moveDist >= dist) {
+                    this.x = this.targetX;
+                    this.y = this.targetY;
+                    this.isMoving = false;
+                } else {
+                    const angle = Math.atan2(dy, dx);
+                    this.x += Math.cos(angle) * moveDist;
+                    this.y += Math.sin(angle) * moveDist;
+                }
+            }
+        }
+
         const screenX = this.getScreenX(scrollOffset, canvasWidth);
         if (screenX === null) return;
 

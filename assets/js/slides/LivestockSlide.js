@@ -26,11 +26,11 @@ class LivestockSlide extends BaseSlide {
         this.initButterflies();
 
         // Global list split
-        const total = BaseSlide.CHARACTER_NAMES.length;
+        const total = BaseSlide.CHARACTERS.length;
         const splitIndex = Math.ceil(total / 2);
 
         this.startIndex = splitIndex;
-        this.characterNames = BaseSlide.CHARACTER_NAMES.slice(splitIndex);
+        this.characterNames = BaseSlide.CHARACTERS.slice(splitIndex);
 
         // Images
         this.images = {
@@ -125,9 +125,9 @@ class LivestockSlide extends BaseSlide {
 
     loadCharacterImages() {
         this.characterImages = [];
-        for (let i = 0; i < this.characterNames.length; i++) {
+        for (let i = 0; i < BaseSlide.CHARACTERS.length; i++) {
             const img = new Image();
-            img.src = `assets/images/characters/chr_${this.startIndex + i}.png`;
+            img.src = `assets/images/characters/chr_${i}.png`;
             this.characterImages.push(img);
         }
     }
@@ -149,7 +149,7 @@ class LivestockSlide extends BaseSlide {
         const usableWidth = visibleWidth - margin * 2;
         const baseSpacing = usableWidth / (numChars - 1);
 
-        this.characterNames.forEach((name, i) => {
+        this.characterNames.forEach((characterData, i) => {
             // Distribute within visible camera range
             const baseX = cameraMinX + margin + (i * baseSpacing);
 
@@ -162,8 +162,10 @@ class LivestockSlide extends BaseSlide {
             const yOffset = (Math.random() * 200 - 100) * scale;
 
             // Create Character object
-            const image = this.characterImages[i];
-            this.characters.push(new Character(finalX, groundY + yOffset, charSize, image, name));
+            const image = this.characterImages[characterData.avatar];
+
+            const character = new Character(finalX, groundY + yOffset, charSize, image, characterData.name, characterData.messages);
+            this.characters.push(character);
         });
 
         // No need to sort here, will sort with animals together

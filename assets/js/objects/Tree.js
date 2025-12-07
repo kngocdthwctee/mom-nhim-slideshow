@@ -10,8 +10,8 @@ class Tree extends GameObject {
      * @param {Object} images - Map of tree images
      * @param {boolean} flip - Whether to flip horizontally
      */
-    constructor(x, y, size, type, images, flip = false) {
-        super(x, y, size, images[type]);
+    constructor(x, y, size, type, image, flip = false) {
+        super(x, y, size, image);
         this.type = type;
         this.flip = flip;
 
@@ -60,11 +60,10 @@ class Tree extends GameObject {
      * Handle click on tree
      */
     onClick() {
-        // 10% chance to drop gift
-        if (Math.random() < 0.1 && this.giftImage.complete && this.giftImage.width > 0) {
-            this.activateGift();
+        if (this.owner) {
+            this.owner.treeOnClick(this);
         } else {
-            this.showChat(Tree.getRandomMessage(), 5000);
+            this.activateGift();
         }
     }
 

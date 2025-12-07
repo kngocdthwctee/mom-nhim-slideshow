@@ -33,8 +33,8 @@ class HouseSlide extends BaseSlide {
         this.momImage = new Image();
         this.momImage.src = 'assets/images/characters/chr_106.png';
 
-        this.initHouses();
         this.initCharacters();
+        this.initHouses();
 
         // Add click handler for GameObjects
         this.handleCanvasClick = this.handleCanvasClick.bind(this);
@@ -50,7 +50,7 @@ class HouseSlide extends BaseSlide {
         const size = 800 * scale;
 
         // Create House object
-        const house = new House(this.width / 2, groundY, size, this.houseImage);
+        const house = new House(this.width / 2, groundY, size, this.houseImage, this.characters[0]);
         this.houses.push(house);
 
         // Set camera limits (can pan left/right a bit)
@@ -60,14 +60,29 @@ class HouseSlide extends BaseSlide {
     initCharacters() {
         this.characters = [];
         const scale = this.getScale();
-        const groundY = this.height - 50 * scale; // Slightly above bottom
+        const groundY = this.height - 150 * scale; // Slightly above bottom
         const size = 150 * scale;
 
         // Add "Nhím - Mom" character
         // Positioned slightly to the right of the house center
-        const x = this.width / 2 + 150 * scale;
+        const x = this.width / 2 - 100 * scale;
 
-        const momChar = new Character(x, groundY, size, this.momImage, "Nhím - Mom");
+        const momChar = new Character(x, groundY, size, this.momImage, "Nhím - Mom", [
+            "Chào bạn! 👋",
+            "Hôm nay thật đẹp trời! ☀️",
+            "Mình đang bận quá! 😅",
+            "Được nghỉ rồi! 🎉",
+            "Đi chơi không? 🎈",
+            "Mệt quá! 😴",
+            "Vui quá! 😊",
+            "Làm gì thế?  🤔",
+            "Ăn gì đây? 🍰",
+            "Tuyệt vời! ⭐",
+            "Hehe 😄",
+            "À... 😯",
+            "Ồ! 😲",
+            "Được rồi! 👍"
+        ]);
         this.characters.push(momChar);
     }
 
@@ -97,8 +112,8 @@ class HouseSlide extends BaseSlide {
     onResize(width, height) {
         this.width = width;
         this.height = height;
-        this.initHouses();
         this.initCharacters(); // Re-init characters on resize
+        this.initHouses();
         super.initSnowfall();
     }
 

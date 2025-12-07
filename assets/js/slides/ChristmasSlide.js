@@ -68,7 +68,6 @@ class ChristmasSlide extends BaseSlide {
     }
 
     initLights() {
-        const scale = Math.min(this.width, this.height) / 800;
         this.maxCameraOffset = 0; // Disable camera panning
 
         this.lightBulbs = [];

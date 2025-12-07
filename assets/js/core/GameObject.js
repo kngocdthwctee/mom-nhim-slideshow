@@ -29,6 +29,18 @@ class GameObject {
     }
 
     /**
+     * Calculate distance to another GameObject
+     * @param {GameObject} other - The other object
+     * @returns {number} Distance in pixels
+     */
+    distanceTo(other) {
+        if (!other) return Infinity;
+        const dx = this.x - other.x;
+        const dy = this.y - other.y;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    /**
      * Calculate screen X position with scrolling
      * @param {number} scrollOffset - Camera scroll offset
      * @param {number} canvasWidth - Canvas width
