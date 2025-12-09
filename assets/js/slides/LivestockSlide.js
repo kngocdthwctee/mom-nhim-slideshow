@@ -164,7 +164,7 @@ class LivestockSlide extends BaseSlide {
             // Create Character object
             const image = this.characterImages[characterData.avatar];
 
-            const character = new Character(finalX, groundY + yOffset, charSize, image, characterData.name, characterData.messages);
+            const character = new Character(finalX, groundY + yOffset, charSize, image, characterData.name, characterData.messages, [], [], characterData.sound);
             this.characters.push(character);
         });
 

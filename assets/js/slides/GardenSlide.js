@@ -161,7 +161,7 @@ class GardenSlide extends BaseSlide {
 
             // Create Character object
             const image = this.characterImages[characterData.avatar];
-            const character = new Character(finalX, groundY + yOffset, charSize, image, characterData.name, characterData.messages, characterData.giftMessages, characterData.noGiftMessages);
+            const character = new Character(finalX, groundY + yOffset, charSize, image, characterData.name, characterData.messages, characterData.giftMessages, characterData.noGiftMessages, characterData.sound);
 
             if (characterData.treeOwner) {
                 this.trees.filter(tree => tree.type == characterData.treeOwner).forEach(tree => {
