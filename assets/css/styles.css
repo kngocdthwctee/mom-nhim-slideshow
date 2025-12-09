@@ -634,3 +634,131 @@ body {
         font-size: 0.8rem;
     }
 }
+
+/* ============================
+   Christmas Countdown Overlay
+   ============================ */
+.christmas-countdown-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9998;
+    /* Below loading (9999) but above everything else */
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-image: url('../images/backgrounds/bg-pc.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: opacity 0.5s ease;
+}
+
+@media (max-width: 768px) {
+    .christmas-countdown-overlay {
+        background-image: url('../images/backgrounds/bg-mobile.jpg');
+    }
+}
+
+.christmas-countdown-overlay::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg,
+            rgba(255, 182, 193, 0.85) 0%,
+            rgba(255, 105, 180, 0.75) 50%,
+            rgba(255, 240, 245, 0.85) 100%);
+    z-index: -1;
+}
+
+.countdown-content {
+    background: rgba(255, 255, 255, 0.9);
+    /* White transparent container */
+    padding: 40px;
+    border-radius: 30px;
+    border: 4px solid #FF1493;
+    /* Border matches header */
+    box-shadow: 0 10px 40px rgba(233, 30, 99, 0.3);
+    text-align: center;
+    animation: float 3s ease-in-out infinite;
+}
+
+.countdown-title {
+    font-family: "Comic Sans MS", sans-serif;
+    /* Cute font */
+    font-size: 2rem;
+    color: #FF1493;
+    /* DeepPink */
+    margin-bottom: 30px;
+}
+
+.countdown-timer {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.timer-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.5);
+    padding: 15px;
+    border-radius: 15px;
+    border: 2px solid #FFB6C1;
+    min-width: 80px;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.timer-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #FF69B4;
+    /* HotPink */
+    font-family: Arial, sans-serif;
+}
+
+.timer-label {
+    font-size: 0.9rem;
+    color: #DB7093;
+    /* PaleVioletRed */
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 5px;
+    font-family: Arial, sans-serif;
+}
+
+.countdown-decoration {
+    font-size: 1.5rem;
+    color: #C71585;
+    /* MediumVioletRed */
+    margin-top: 20px;
+    font-family: "Comic Sans MS", sans-serif;
+}
+
+@media (max-width: 600px) {
+    .countdown-timer {
+        gap: 10px;
+    }
+
+    .timer-item {
+        min-width: 60px;
+        padding: 10px;
+    }
+
+    .timer-value {
+        font-size: 1.8rem;
+    }
+
+    .countdown-title {
+        font-size: 1.5rem;
+    }
+}
