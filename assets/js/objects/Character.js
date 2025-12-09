@@ -9,7 +9,7 @@ class Character extends GameObject {
      * @param {Image} image - Character image
      * @param {string} name - Character name
      */
-    constructor(x, y, size, image, name, messages, giftMessages = [], noGiftMessages = []) {
+    constructor(x, y, size, image, name, messages, giftMessages = [], noGiftMessages = [], sound = null) {
         super(x, y, size, image);
         this.name = name;
         this.messages = messages;
@@ -19,6 +19,12 @@ class Character extends GameObject {
         this.targetY = y;
         this.isMoving = false;
         this.lastTimestamp = 0;
+
+        // Sound effect
+        this.sound = null;
+        if (sound) {
+            this.sound = new Audio(sound);
+        }
     }
 
     /**
@@ -35,6 +41,10 @@ class Character extends GameObject {
      */
     onClick() {
         this.showChat(this.getRandomMessage(), 5000);
+        if (this.sound) {
+            this.sound.currentTime = 0;
+            this.sound.play().catch(e => console.log("Audio play failed:", e));
+        }
     }
 
     /**
