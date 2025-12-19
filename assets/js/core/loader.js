@@ -31,10 +31,22 @@
             'assets/images/garden/caytao.png',
             'assets/images/garden/cayxoai.png',
 
+            'assets/images/fruits/naichuoi.png',
+            'assets/images/fruits/quaccam.png',
+            'assets/images/fruits/quaoi.png',
+            'assets/images/fruits/quamit.png',
+            'assets/images/fruits/quatao.png',
+            'assets/images/fruits/quaxoai.png',
+            'assets/images/fruits/quasaurieng.png',
+
             'assets/images/trees/candy-tree.png',
         ],
         audio: [
             'assets/audio/gift-sound.mp3'
+        ],
+        sounds: [
+            'assets/sounds/bee-landing-on-flower.mp3',
+            'assets/sounds/cow-mooing.mp3'
         ]
     };
 
@@ -129,6 +141,11 @@
 
         // Load audio
         resources.audio.forEach(src => {
+            promises.push(loadAudio(src));
+        });
+
+        // Load sounds
+        resources.sounds.forEach(src => {
             promises.push(loadAudio(src));
         });
 

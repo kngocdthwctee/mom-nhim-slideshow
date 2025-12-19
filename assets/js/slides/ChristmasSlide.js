@@ -120,7 +120,6 @@ class ChristmasSlide extends BaseSlide {
         // Draw Christmas tree
         this.drawChristmasTree(ctx, timestamp, scale);
         this.drawSnowfall(ctx, timestamp);
-        this.drawGreeting(ctx, timestamp, scale);
     }
 
     drawGround(ctx, scale) {
@@ -470,19 +469,6 @@ class ChristmasSlide extends BaseSlide {
             ctx.fillRect(-c.size * scale / 2, -c.size * scale / 4, c.size * scale, c.size * scale / 2);
             ctx.restore();
         });
-    }
-
-    drawGreeting(ctx, timestamp, scale) {
-        const pulse = Math.sin(timestamp / 500) * 0.1 + 1;
-
-        ctx.save();
-        ctx.font = `bold ${24 * pulse * scale}px Cormorant Garamond`;
-        ctx.textAlign = 'center';
-        ctx.fillStyle = '#ffd700';
-        ctx.shadowColor = '#ffd700';
-        ctx.shadowBlur = 10 * scale;
-        ctx.fillText('Merry Christmas!', this.width / 2, this.height - 40 * scale);
-        ctx.restore();
     }
 
     cleanup() {
