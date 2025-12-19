@@ -32,7 +32,7 @@
             'assets/images/garden/cayxoai.png',
 
             'assets/images/fruits/naichuoi.png',
-            'assets/images/fruits/quaccam.png',
+            'assets/images/fruits/quacam.png',
             'assets/images/fruits/quaoi.png',
             'assets/images/fruits/quamit.png',
             'assets/images/fruits/quatao.png',
