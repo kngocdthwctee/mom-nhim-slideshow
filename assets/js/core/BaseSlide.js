@@ -293,7 +293,7 @@ BaseSlide.CHARACTERS = [
         treeOwner: "caysaurieng",
         giftMessages: ["Sầu riêng rụng rồi! 🤤", "Thơm nức mũi luôn!", "Hàng tuyển đấy!"],
         noGiftMessages: ["Coi chừng gai đâm!", "Chưa rụng đâu", "Đợi gió to đã 🌬️"],
-        sound: "assets/sound/bee-landing-on-flower.mp3"
+        sound: "assets/sounds/bee-landing-on-flower.mp3"
     },
     { id: 4, name: "lez", messages: ["hi cô Nhím"], avatar: 4 },
     { id: 5, name: "Hluan", messages: ["chị Nhím địch"], avatar: 2 },
@@ -323,7 +323,7 @@ BaseSlide.CHARACTERS = [
     { id: 20, name: "Nom", messages: ["ê m ơi, có biến"], avatar: 20 },
     { id: 21, name: "NHND", messages: ["ngủ sớm chưa???"], avatar: 33 },
     { id: 22, name: "Anh3", messages: ["em t tẽn lắm chứ khong thể dth v được"], avatar: 24 },
-    { id: 23, name: "Bò Rừng Juno", messages: ["Òooooooo"], avatar: 23, sound: "assets/sound/cow-mooing.mp3" },
+    { id: 23, name: "Bò Rừng Juno", messages: ["Òooooooo"], avatar: 23, sound: "assets/sounds/cow-mooing.mp3" },
     { id: 24, name: "TuấnL", messages: ["BFF ^.^"], avatar: 22 },
     { id: 25, name: "Tuấncon", messages: ["2 đợi em đi nvqs về nha"], avatar: 86 },
     { id: 26, name: "Latuna", messages: ["10k mute mom"], avatar: 26 },
