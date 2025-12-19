@@ -8,10 +8,12 @@ class HouseSlide extends BaseSlide {
         console.log('HouseSlide initialized - Interactive House Version');
         this.title = 'Ngôi nhà của Mom Nhím';
         this.content = `
-            <p>Đêm Giáng Sinh, căn nhà của Mom sáng rực như được "buff ánh sáng cấp 10", đèn nhấp nháy lung linh đến mức mấy con tuần lộc bay ngang còn phải nheo mắt.</p>
-            <p>Trong khi đó, tụi nhỏ thì được Mom "ưu ái" cho ở khu ngoài trời – nơi Mom gọi là "chương trình rèn luyện thể chất, tăng sức đề kháng và tận hưởng khí trời".</p>
-            <p>Gió thổi phần phật, góc sân đôi khi phát ra tiếng "lách tách" lạ lạ, nhưng Mom bảo: "Không sao, không sao… tiếng thiên nhiên thôi."</p>
-            <p>Ai nấy nhìn nhau kiểu: "Thiên nhiên mà biết chớp mắt hả Mom…?"</p>
+            <p>Giáng Sinh tới, nhà <span class="highlight">Mom Nhím</span> sáng rực như bật max đồ họa.</p>
+            <p>Đèn treo khắp nơi, trong nhà ấm áp, thơm mùi bánh.</p>
+            <p>Còn tụi nhỏ thì sao? Mom cho ra <span class="highlight">ở ngoài trời</span> hết.</p>
+            <p>Mom nói rất tỉnh: <span class="character">"Ra đây cho mát, cho khỏe, cho… quen gió quen sương."</span></p>
+            <p>Gió thổi cái vèo. Tụi nhỏ nhìn nhau:</p>
+            <p><span class="highlight">Ủa Giáng Sinh hay trại huấn luyện phiên bản huyền bí vậy Mom?</span></p>
         `;
 
         this.houses = [];
@@ -157,6 +159,94 @@ class HouseSlide extends BaseSlide {
 
     drawGround(ctx, scale) {
         super.drawGround(ctx, scale, 'snow');
+    }
+
+    /**
+     * Custom background: Soft pink winter morning with cherry blossoms
+     */
+    drawBackground(ctx, timestamp) {
+        // Pink gradient sky
+        const gradient = ctx.createLinearGradient(0, 0, 0, this.height);
+        gradient.addColorStop(0, '#fce7f3');   // pink-100
+        gradient.addColorStop(0.4, '#fbcfe8'); // pink-200
+        gradient.addColorStop(0.7, '#fff1f2'); // rose-50
+        gradient.addColorStop(1, '#fdf2f8');   // pink-50
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, this.width, this.height);
+
+        // Soft pink sun with glow
+        const sunX = this.width * 0.85;
+        const sunY = this.height * 0.18;
+        const sunRadius = 50;
+
+        // Sun glow
+        const sunGlow = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, sunRadius * 2.5);
+        sunGlow.addColorStop(0, 'rgba(251, 207, 232, 0.6)');
+        sunGlow.addColorStop(0.5, 'rgba(251, 207, 232, 0.2)');
+        sunGlow.addColorStop(1, 'transparent');
+        ctx.fillStyle = sunGlow;
+        ctx.fillRect(sunX - sunRadius * 3, sunY - sunRadius * 3, sunRadius * 6, sunRadius * 6);
+
+        // Sun
+        ctx.beginPath();
+        ctx.arc(sunX, sunY, sunRadius, 0, Math.PI * 2);
+        const sunGradient = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, sunRadius);
+        sunGradient.addColorStop(0, '#fef3c7');
+        sunGradient.addColorStop(1, '#fcd34d');
+        ctx.fillStyle = sunGradient;
+        ctx.fill();
+
+        // Cherry blossom petals (sakura)
+        this.drawSakuraPetals(ctx, timestamp);
+    }
+
+    /**
+     * Draw floating sakura petals
+     */
+    drawSakuraPetals(ctx, timestamp) {
+        if (!this.sakuraPetals) {
+            this.sakuraPetals = [];
+            for (let i = 0; i < 25; i++) {
+                this.sakuraPetals.push({
+                    x: Math.random() * this.width,
+                    y: Math.random() * this.height * 0.7,
+                    size: 4 + Math.random() * 6,
+                    rotation: Math.random() * Math.PI * 2,
+                    speed: 0.3 + Math.random() * 0.5,
+                    drift: (Math.random() - 0.5) * 0.8,
+                    rotationSpeed: (Math.random() - 0.5) * 0.02
+                });
+            }
+        }
+
+        ctx.save();
+        this.sakuraPetals.forEach(petal => {
+            // Update position
+            petal.y += petal.speed;
+            petal.x += Math.sin(timestamp / 1000 + petal.rotation) * petal.drift;
+            petal.rotation += petal.rotationSpeed;
+
+            // Reset if off screen
+            if (petal.y > this.height * 0.7) {
+                petal.y = -10;
+                petal.x = Math.random() * this.width;
+            }
+
+            // Draw petal
+            ctx.save();
+            ctx.translate(petal.x, petal.y);
+            ctx.rotate(petal.rotation);
+            ctx.globalAlpha = 0.7;
+
+            // Petal shape (ellipse-like)
+            ctx.beginPath();
+            ctx.ellipse(0, 0, petal.size, petal.size * 0.6, 0, 0, Math.PI * 2);
+            ctx.fillStyle = '#f9a8d4';
+            ctx.fill();
+
+            ctx.restore();
+        });
+        ctx.restore();
     }
 
     cleanup() {

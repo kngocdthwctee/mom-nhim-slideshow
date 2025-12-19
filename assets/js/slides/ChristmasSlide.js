@@ -7,13 +7,11 @@ class ChristmasSlide extends BaseSlide {
         super();
         this.title = 'Lời chúc Giáng Sinh 🎄';
         this.content = `
-            <p><span class="highlight">Mom Nhím</span> xuất hiện, gửi lời chúc Giáng Sinh ấm áp và vui tươi:</p>
-            <p style="text-align: center; font-size: 1.1rem; margin: 20px 0;">
-                <span class="character">"Chúc cả nhà một mùa Giáng Sinh an lành, ấm áp bên người thương! 🎁"</span>
-            </p>
-            <p>Giọng văn mang chút thần bí nhưng vẫn ấm lòng và hài hước...</p>
-            <p style="margin-top: 15px;">Các "con" đồng thanh: <span class="character">"Cảm ơn Mom~ Merry Christmas! 🎅"</span></p>
-            <p style="text-align: center; margin-top: 20px; font-size: 1.5rem;">🎄 ❄️ 🎁 ❄️ 🎄</p>
+            <p>Mom cười, nhìn thẳng camera, giọng vừa ấm vừa lầy:</p>
+            <p><span class="character">"Giáng Sinh tới rồi, Mom chúc cả nhà mình luôn vui vẻ, ăn no, ngủ kỹ, coi live không lag, ở đâu cũng ấm, trong nhà hay ngoài vườn cũng có tiếng cười."</span></p>
+            <p><span class="character">"Cảm ơn cả nhà đã luôn ở đây, Giáng Sinh này mình cùng nhau vui nha!"</span></p>
+            <p>Cả nhà trong live đồng thanh đáp lại. Gió lại thổi nhẹ. Cây lại rung rung.</p>
+            <p><span class="highlight">Giáng Sinh năm nay: hơi lạ, hơi huyền, nhưng vui hết nấc 🎄😆</span></p>
         `;
 
         this.ornaments = [];
@@ -127,6 +125,112 @@ class ChristmasSlide extends BaseSlide {
 
     drawGround(ctx, scale) {
         super.drawGround(ctx, scale, 'snow');
+    }
+
+    /**
+     * Custom background: Festive night sky with stars and aurora
+     */
+    drawBackground(ctx, timestamp) {
+        // Night sky gradient
+        const gradient = ctx.createLinearGradient(0, 0, 0, this.height);
+        gradient.addColorStop(0, '#0f172a');   // slate-900
+        gradient.addColorStop(0.3, '#1e3a5f'); // dark blue
+        gradient.addColorStop(0.6, '#4a1942'); // dark purple
+        gradient.addColorStop(1, '#7c3aed');   // violet-600
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, this.width, this.height);
+
+        // Draw aurora borealis
+        this.drawAurora(ctx, timestamp);
+
+        // Draw twinkling stars
+        this.drawStars(ctx, timestamp);
+
+        // Moon
+        const moonX = this.width * 0.15;
+        const moonY = this.height * 0.15;
+        const moonRadius = 35;
+
+        // Moon glow
+        const moonGlow = ctx.createRadialGradient(moonX, moonY, 0, moonX, moonY, moonRadius * 2.5);
+        moonGlow.addColorStop(0, 'rgba(226, 232, 240, 0.4)');
+        moonGlow.addColorStop(0.5, 'rgba(226, 232, 240, 0.15)');
+        moonGlow.addColorStop(1, 'transparent');
+        ctx.fillStyle = moonGlow;
+        ctx.fillRect(moonX - moonRadius * 3, moonY - moonRadius * 3, moonRadius * 6, moonRadius * 6);
+
+        // Moon
+        ctx.beginPath();
+        ctx.arc(moonX, moonY, moonRadius, 0, Math.PI * 2);
+        const moonGradient = ctx.createRadialGradient(moonX - 10, moonY - 10, 0, moonX, moonY, moonRadius);
+        moonGradient.addColorStop(0, '#f8fafc');
+        moonGradient.addColorStop(1, '#e2e8f0');
+        ctx.fillStyle = moonGradient;
+        ctx.fill();
+    }
+
+    /**
+     * Draw aurora borealis effect
+     */
+    drawAurora(ctx, timestamp) {
+        ctx.save();
+        ctx.globalAlpha = 0.15;
+
+        const wave1 = Math.sin(timestamp / 2000) * 20;
+        const wave2 = Math.sin(timestamp / 1500 + 1) * 15;
+
+        // Aurora ribbons
+        const colors = ['#22d3ee', '#34d399', '#a78bfa'];
+        colors.forEach((color, i) => {
+            const offset = i * 40 + wave1 * (i + 1) * 0.3;
+            const gradient = ctx.createLinearGradient(0, 0, this.width, 0);
+            gradient.addColorStop(0, 'transparent');
+            gradient.addColorStop(0.3, color);
+            gradient.addColorStop(0.7, color);
+            gradient.addColorStop(1, 'transparent');
+
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.moveTo(0, this.height * 0.1 + offset);
+            for (let x = 0; x <= this.width; x += 50) {
+                const y = this.height * 0.1 + offset + Math.sin(x / 100 + timestamp / 1000 + i) * 30;
+                ctx.lineTo(x, y);
+            }
+            ctx.lineTo(this.width, this.height * 0.4);
+            ctx.lineTo(0, this.height * 0.4);
+            ctx.closePath();
+            ctx.fill();
+        });
+
+        ctx.restore();
+    }
+
+    /**
+     * Draw twinkling stars
+     */
+    drawStars(ctx, timestamp) {
+        if (!this.stars) {
+            this.stars = [];
+            for (let i = 0; i < 60; i++) {
+                this.stars.push({
+                    x: Math.random() * this.width,
+                    y: Math.random() * this.height * 0.5,
+                    size: 1 + Math.random() * 2,
+                    phase: Math.random() * Math.PI * 2
+                });
+            }
+        }
+
+        ctx.save();
+        this.stars.forEach(star => {
+            const twinkle = (Math.sin(timestamp / 500 + star.phase) + 1) / 2;
+            ctx.globalAlpha = 0.4 + twinkle * 0.6;
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(star.x, star.y, star.size * twinkle, 0, Math.PI * 2);
+            ctx.fill();
+        });
+        ctx.restore();
     }
 
 

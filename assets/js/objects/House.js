@@ -36,7 +36,7 @@ class House extends GameObject {
 
     onClick() {
         if (this.owner) {
-            this.owner.showChat("Nhà này là của mum, không ai được động vào đây", 3000);
+            this.owner.showChat("Nhà này là của mum, ai cho động zô", 3000);
         }
     }
 

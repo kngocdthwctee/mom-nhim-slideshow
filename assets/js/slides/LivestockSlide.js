@@ -6,13 +6,14 @@ class LivestockSlide extends BaseSlide {
     constructor() {
         super();
         console.log('LivestockSlide initialized - Livestock Pen Version');
-        this.title = 'Khu chuồng trại';
+        this.title = 'Khu sinh hoạt chung';
         this.content = `
-            <p>Phía bên là khu chuồng trại Mom chăm sóc: </p>
-            <p>gà thì cứ chạy linh tinh, lợn thì nằm ườn ra, </p>
-            <p>bò và trâu thì đang nhai cỏ nhìn mọi người.</p>
-            <p>Thỉnh thoảng có tiếng "cục ta" của gà, "ủn ỉn" của lợn tạo không khí ồn ã nhưng vui vẻ.</p>
-            <p>Mom thích nhất là ngồi đây vừa xem mấy con vật vừa tám chuyện!</p>
+            <p>Khu sinh hoạt chung ngoài trời, nhìn thì chill mà ở thì… <span class="highlight">hơi rờn rợn xíu</span>.</p>
+            <p>Gió thổi qua tai nghe như ai đó gọi tên. Quay lại thì chỉ thấy… cái áo treo bị gió lật.</p>
+            <p>Không ai hoảng. Chỉ có tiếng cười:</p>
+            <p><span class="character">"Ở đây chắc có hiệu ứng âm thanh Giáng Sinh bản đặc biệt."</span></p>
+            <p>Mom vẫn rất bình thản: <span class="character">"Yên tâm, để Mom từ từ cải tạo."</span></p>
+            <p>Nghe xong, tụi nhỏ… <span class="highlight">càng hồi hộp hơn</span>.</p>
         `;
 
         // Enable camera panning
@@ -238,6 +239,82 @@ class LivestockSlide extends BaseSlide {
 
     drawGround(ctx, scale) {
         super.drawGround(ctx, scale, 'brown');
+    }
+
+    /**
+     * Custom background: Warm rustic farm with golden hour lighting
+     */
+    drawBackground(ctx, timestamp) {
+        // Golden hour gradient sky
+        const gradient = ctx.createLinearGradient(0, 0, 0, this.height);
+        gradient.addColorStop(0, '#93c5fd');   // blue-300
+        gradient.addColorStop(0.3, '#bfdbfe'); // blue-200
+        gradient.addColorStop(0.5, '#fef3c7'); // amber-100
+        gradient.addColorStop(0.7, '#fde68a'); // amber-200
+        gradient.addColorStop(1, '#fcd34d');   // amber-300
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, this.width, this.height);
+
+        // Draw soft clouds
+        this.drawClouds(ctx, timestamp);
+
+        // Warm golden sun
+        const sunX = this.width * 0.75;
+        const sunY = this.height * 0.22;
+        const sunRadius = 50;
+
+        // Sun glow
+        const sunGlow = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, sunRadius * 3);
+        sunGlow.addColorStop(0, 'rgba(251, 191, 36, 0.6)');
+        sunGlow.addColorStop(0.5, 'rgba(251, 191, 36, 0.2)');
+        sunGlow.addColorStop(1, 'transparent');
+        ctx.fillStyle = sunGlow;
+        ctx.fillRect(sunX - sunRadius * 4, sunY - sunRadius * 4, sunRadius * 8, sunRadius * 8);
+
+        // Sun
+        ctx.beginPath();
+        ctx.arc(sunX, sunY, sunRadius, 0, Math.PI * 2);
+        const sunGradient = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, sunRadius);
+        sunGradient.addColorStop(0, '#fef3c7');
+        sunGradient.addColorStop(0.7, '#fcd34d');
+        sunGradient.addColorStop(1, '#f59e0b');
+        ctx.fillStyle = sunGradient;
+        ctx.fill();
+    }
+
+    /**
+     * Draw soft fluffy clouds
+     */
+    drawClouds(ctx, timestamp) {
+        if (!this.clouds) {
+            this.clouds = [
+                { x: this.width * 0.15, y: this.height * 0.15, scale: 1 },
+                { x: this.width * 0.45, y: this.height * 0.1, scale: 1.2 },
+                { x: this.width * 0.85, y: this.height * 0.12, scale: 0.8 }
+            ];
+        }
+
+        ctx.save();
+        ctx.globalAlpha = 0.7;
+        ctx.fillStyle = '#ffffff';
+
+        this.clouds.forEach(cloud => {
+            const drift = Math.sin(timestamp / 5000) * 10;
+            const x = cloud.x + drift;
+            const y = cloud.y;
+            const s = cloud.scale * 30;
+
+            // Draw cloud using overlapping circles
+            ctx.beginPath();
+            ctx.arc(x, y, s, 0, Math.PI * 2);
+            ctx.arc(x + s * 1.2, y - s * 0.2, s * 0.9, 0, Math.PI * 2);
+            ctx.arc(x + s * 2.2, y, s * 0.8, 0, Math.PI * 2);
+            ctx.arc(x + s * 0.6, y - s * 0.5, s * 0.7, 0, Math.PI * 2);
+            ctx.arc(x + s * 1.5, y - s * 0.4, s * 0.6, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        ctx.restore();
     }
 
     cleanup() {

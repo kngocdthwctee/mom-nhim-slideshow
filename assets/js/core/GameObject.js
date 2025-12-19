@@ -92,13 +92,47 @@ class GameObject {
      */
     isPointInside(clickX, clickY, objectScreenX) {
         // Calculate object bounds using its screen position
-        const halfWidth = this.getHitboxWidth() / 2;
+        const hitWidth = this.getHitboxWidth();
+        const halfWidth = hitWidth / 2;
         const left = objectScreenX - halfWidth;
         const right = objectScreenX + halfWidth;
         const top = this.y - this.size;
         const bottom = this.y;
 
-        return clickX >= left && clickX <= right && clickY >= top && clickY <= bottom;
+        // 1. Basic bounding box check
+        const inBounds = clickX >= left && clickX <= right && clickY >= top && clickY <= bottom;
+        if (!inBounds) return false;
+
+        // 2. Pixel-perfect check if image is available
+        if (this.image && this.image.complete && this.image.width > 0) {
+            try {
+                // Calculate relative position (0 to 1)
+                const relX = (clickX - left) / hitWidth;
+                const relY = (clickY - top) / this.size;
+
+                // Map to source image coordinates
+                let srcX = Math.floor(relX * this.image.width);
+                let srcY = Math.floor(relY * this.image.height);
+
+                // Handle flipped objects (e.g. Tree)
+                if (this.flip) {
+                    srcX = this.image.width - 1 - srcX;
+                }
+
+                // Ensure coordinates are within bounds
+                srcX = Math.max(0, Math.min(this.image.width - 1, srcX));
+                srcY = Math.max(0, Math.min(this.image.height - 1, srcY));
+
+                // Check alpha value
+                const alpha = GameObject.getPixelAlpha(this.image, srcX, srcY);
+                return alpha > 10; // Threshold: ignore if alpha <= 10
+            } catch (e) {
+                console.warn('Pixel check failed, falling back to bounding box', e);
+                return true;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -197,4 +231,30 @@ class GameObject {
     render(ctx, scale, scrollOffset, canvasWidth, timestamp) {
         throw new Error('render() must be implemented by subclass');
     }
+
+    /**
+     * Get alpha value of a pixel from an image
+     * Uses a shared static canvas for performance
+     */
+    static getPixelAlpha(image, x, y) {
+        if (!GameObject.pixelCheckCanvas) {
+            GameObject.pixelCheckCanvas = document.createElement('canvas');
+            GameObject.pixelCheckCanvas.width = 1;
+            GameObject.pixelCheckCanvas.height = 1;
+            GameObject.pixelCheckCtx = GameObject.pixelCheckCanvas.getContext('2d', { willReadFrequently: true });
+        }
+
+        const ctx = GameObject.pixelCheckCtx;
+        // Optimization: Clear only if strict transparency is needed, but drawImage overwrites usually.
+        // Clearing is safer.
+        ctx.clearRect(0, 0, 1, 1);
+
+        ctx.drawImage(image, x, y, 1, 1, 0, 0, 1, 1);
+        const data = ctx.getImageData(0, 0, 1, 1).data;
+        return data[3];
+    }
 }
+// Static properties for pixel checking
+GameObject.pixelCheckCanvas = null;
+GameObject.pixelCheckCtx = null;
+

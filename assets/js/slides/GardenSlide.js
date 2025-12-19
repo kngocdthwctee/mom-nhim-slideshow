@@ -7,14 +7,14 @@ class GardenSlide extends BaseSlide {
     constructor() {
         super();
         console.log('GardenSlide initialized - New Trees Version');
-        this.title = 'Khu vườn huyền bí phía sau';
+        this.title = 'Khu vườn huyền bí';
         this.content = `
-            <p>Phía sau là khu vườn Mom trồng riêng cho từng đứa: </p>
-            <p>cây mít thì cứ rung bần bật mỗi khi Pun đi ngang, </p>
-            <p>xoài của Quỳnh Như thì tỏa mùi thơm như đang rủ rê, </p>
-            <p> còn cây ổi của Ong thỉnh thoảng khẽ nghiêng đầu như gật gù.</p>
-            <p>Hoa quả lúc nào cũng sai trĩu, tụi nhỏ vừa hái vừa ăn, vừa nghe tiếng lá xào xạc như đang cười khúc khích.</p>
-            <p>Thỉnh thoảng một quả tự rơi xuống đất cộp — không mạnh, chỉ vừa đủ để mọi người giật mình rồi phá lên cười: "Vườn nhà Mom còn biết troll!"</p>
+            <p>Sau nhà là khu vườn nhìn cái là thấy… <span class="highlight">không bình thường</span>.</p>
+            <p>Cây mít lúc nào cũng rung rung, trái lắc lư như đang tám chuyện.</p>
+            <p>Cây xoài đung đưa, lá va vào nhau nghe như cười khúc khích.</p>
+            <p>Cây ổi thì im im, nhưng gió thổi qua là lá xào xạc y như đang thì thầm.</p>
+            <p>Hoa quả sai trĩu, tụi nhỏ tự hái, tự ăn, tự chăm.</p>
+            <p>Có lúc quả rung nhẹ… <span class="highlight">không biết do gió hay do cây coi livestream nhiều quá.</span></p>
         `;
 
         // Enable camera panning
@@ -213,6 +213,92 @@ class GardenSlide extends BaseSlide {
 
         this.drawSnowfall(ctx, timestamp);
 
+        ctx.restore();
+    }
+
+    /**
+     * Custom background: Magical enchanted garden with sparkles
+     */
+    drawBackground(ctx, timestamp) {
+        // Blue sky gradient
+        const gradient = ctx.createLinearGradient(0, 0, 0, this.height);
+        gradient.addColorStop(0, '#87CEEB');   // Light sky blue
+        gradient.addColorStop(0.3, '#bae6fd'); // sky-200
+        gradient.addColorStop(0.6, '#e0f2fe'); // sky-100
+        gradient.addColorStop(1, '#f0fdf4');   // green-50 (blends with grass)
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, this.width, this.height);
+
+        // Golden sun with warm glow
+        const sunX = this.width * 0.8;
+        const sunY = this.height * 0.2;
+        const sunRadius = 45;
+
+        // Sun glow
+        const sunGlow = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, sunRadius * 3);
+        sunGlow.addColorStop(0, 'rgba(253, 224, 71, 0.5)');
+        sunGlow.addColorStop(0.4, 'rgba(253, 224, 71, 0.2)');
+        sunGlow.addColorStop(1, 'transparent');
+        ctx.fillStyle = sunGlow;
+        ctx.fillRect(sunX - sunRadius * 4, sunY - sunRadius * 4, sunRadius * 8, sunRadius * 8);
+
+        // Sun
+        ctx.beginPath();
+        ctx.arc(sunX, sunY, sunRadius, 0, Math.PI * 2);
+        ctx.fillStyle = '#fcd34d';
+        ctx.fill();
+
+        // Draw sparkles
+        this.drawSparkles(ctx, timestamp);
+    }
+
+    /**
+     * Draw magical sparkle particles
+     */
+    drawSparkles(ctx, timestamp) {
+        if (!this.sparkles) {
+            this.sparkles = [];
+            for (let i = 0; i < 30; i++) {
+                this.sparkles.push({
+                    x: Math.random() * this.width,
+                    y: Math.random() * this.height * 0.6,
+                    size: 2 + Math.random() * 4,
+                    phase: Math.random() * Math.PI * 2,
+                    speed: 0.5 + Math.random()
+                });
+            }
+        }
+
+        ctx.save();
+        this.sparkles.forEach(sparkle => {
+            // Twinkle effect
+            const twinkle = (Math.sin(timestamp / 300 + sparkle.phase) + 1) / 2;
+            if (twinkle < 0.3) return;
+
+            ctx.globalAlpha = twinkle * 0.8;
+
+            // Draw star shape
+            ctx.save();
+            ctx.translate(sparkle.x, sparkle.y);
+
+            // 4-point star
+            ctx.beginPath();
+            const size = sparkle.size * twinkle;
+            ctx.moveTo(0, -size);
+            ctx.lineTo(size * 0.3, -size * 0.3);
+            ctx.lineTo(size, 0);
+            ctx.lineTo(size * 0.3, size * 0.3);
+            ctx.lineTo(0, size);
+            ctx.lineTo(-size * 0.3, size * 0.3);
+            ctx.lineTo(-size, 0);
+            ctx.lineTo(-size * 0.3, -size * 0.3);
+            ctx.closePath();
+
+            ctx.fillStyle = '#fef08a';
+            ctx.fill();
+
+            ctx.restore();
+        });
         ctx.restore();
     }
 
