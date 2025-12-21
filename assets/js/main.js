@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.hostname === '127.0.0.1' ||
         window.location.protocol === 'file:';
 
-    const ENABLE_COUNTDOWN = !isLocal;
+    const ENABLE_COUNTDOWN = false;//!isLocal;
 
     if (ENABLE_COUNTDOWN) {
         const christmasCountdown = new ChristmasCountdown('2025-12-25T00:00:00', 'christmasCountdown');
