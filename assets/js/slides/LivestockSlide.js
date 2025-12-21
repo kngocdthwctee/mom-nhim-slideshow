@@ -95,7 +95,19 @@ class LivestockSlide extends BaseSlide {
 
         const groundY = this.height - 100 * scale;
 
-        const animalTypes = ['conga', 'conlon', 'conbo', 'contrau'];
+        const animalTypes = [{
+            type: 'conga',
+            sound: 'assets/sounds/chicken-cluking.mp3'
+        }, {
+            type: 'conlon',
+            sound: 'assets/sounds/pig.mp3'
+        }, {
+            type: 'conbo',
+            sound: 'assets/sounds/cow-mooing.mp3'
+        }, {
+            type: 'contrau',
+            sound: 'assets/sounds/ox_mooing.mp3'
+        }];
 
         // Increase number of animals for larger map
         const numAnimals = 20;
@@ -116,9 +128,10 @@ class LivestockSlide extends BaseSlide {
             const size = (80 + Math.random() * 20) * scale;
             const flip = Math.random() > 0.5;
             const bobPhase = Math.random() * Math.PI * 2;
+            const image = this.images[type.type];
 
             // Create Animal object
-            this.animals.push(new Animal(x, groundY + yOffset, size, type, this.images, flip, bobPhase));
+            this.animals.push(new Animal(x, groundY + yOffset, size, type.type, image, flip, bobPhase, type.sound));
         }
 
         // No need to sort here, will sort with characters together

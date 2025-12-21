@@ -1,19 +1,19 @@
 /**
- * Slide 1 - Ngôi nhà của Mom Nhím
+ * Slide 1 - Ngôi nhà của Nhím
  * Vẽ ngôi nhà sáng sủa với hiệu ứng tim bay
  */
 class HouseSlide extends BaseSlide {
     constructor() {
         super();
         console.log('HouseSlide initialized - Interactive House Version');
-        this.title = 'Ngôi nhà của Mom Nhím';
+        this.title = 'Ngôi nhà của NhímNhor';
         this.content = `
-            <p>Giáng Sinh tới, nhà <span class="highlight">Mom Nhím</span> sáng rực như bật max đồ họa.</p>
+            <p>Giáng Sinh tới, nhà <span class="highlight">NhímNhor</span> sáng rực như bật max đồ họa.</p>
             <p>Đèn treo khắp nơi, trong nhà ấm áp, thơm mùi bánh.</p>
-            <p>Còn tụi nhỏ thì sao? Mom cho ra <span class="highlight">ở ngoài trời</span> hết.</p>
-            <p>Mom nói rất tỉnh: <span class="character">"Ra đây cho mát, cho khỏe, cho… quen gió quen sương."</span></p>
+            <p>Còn tụi nhỏ thì sao? Nhím cho ra <span class="highlight">ở ngoài trời</span> hết.</p>
+            <p>Nhím nói rất tỉnh: <span class="character">"Ra đây cho mát, cho khỏe, cho… quen gió quen sương."</span></p>
             <p>Gió thổi cái vèo. Tụi nhỏ nhìn nhau:</p>
-            <p><span class="highlight">Ủa Giáng Sinh hay trại huấn luyện phiên bản huyền bí vậy Mom?</span></p>
+            <p><span class="highlight">Ủa Giáng Sinh hay trại huấn luyện phiên bản huyền bí vậy Nhím?</span></p>
         `;
 
         this.houses = [];
@@ -31,16 +31,105 @@ class HouseSlide extends BaseSlide {
         // Load house image
         this.houseImage.src = 'assets/images/house/house.png';
 
-        // Load character image (Nhím - Mom)
+        // Load character image
         this.momImage = new Image();
         this.momImage.src = 'assets/images/characters/chr_106.png';
 
         this.initCharacters();
         this.initHouses();
+        this.initDialogueSystem();
 
         // Add click handler for GameObjects
         this.handleCanvasClick = this.handleCanvasClick.bind(this);
         canvas.addEventListener('click', this.handleCanvasClick);
+
+        // Start dialogue after a short delay
+        setTimeout(() => this.startDialogue(), 2000);
+    }
+
+    /**
+     * Initialize the dialogue system with scripted conversations
+     */
+    initDialogueSystem() {
+        this.dialogueScript = [
+            // Conversation 1: Greetings
+            { character: "Pun", message: "hi mum 👋" },
+            { character: "NhímNhor", message: "hi pun 😊" },
+            { character: "qn", message: "hi mum 👋" },
+            { character: "NhímNhor", message: "hi qn 😊" },
+            { character: "Pun", message: "hi qn iuu 💕" },
+            { character: "qn", message: "hi iuuuu 💖" },
+
+            // Pause between conversations
+            { character: null, message: null, delay: 3000 },
+
+            // Conversation 2: About the house
+            { character: "Pun", message: "nhà đẹp zạ 🏠✨" },
+            { character: "NhímNhor", message: "nhà mum mà lại 😏" },
+            { character: "qn", message: "bé mun zô nhà 🥺" },
+            { character: "Pun", message: "bé cũng z 🥺" },
+            { character: "NhímNhor", message: "nhà này của mum 🏠" },
+            { character: "NhímNhor", message: "chỉ mik mum ở 😤" },
+            { character: "Pun", message: "ik mò 😢" },
+            { character: "NhímNhor", message: "mấy đứa ra vườn ở đi 👉🌳" },
+            { character: "qn", message: "ik mò mum 😭" }
+        ];
+
+        this.currentDialogueIndex = 0;
+        this.dialogueTimer = null;
+        this.isDialogueRunning = false;
+    }
+
+    /**
+     * Start playing the dialogue script
+     */
+    startDialogue() {
+        if (this.isDialogueRunning) return;
+        this.isDialogueRunning = true;
+        this.currentDialogueIndex = 0;
+        this.playNextDialogue();
+    }
+
+    /**
+     * Play the next line of dialogue
+     */
+    playNextDialogue() {
+        if (!this.isDialogueRunning) return;
+        if (this.currentDialogueIndex >= this.dialogueScript.length) {
+            // Stop dialogue when finished
+            this.isDialogueRunning = false;
+            return;
+        }
+
+        const line = this.dialogueScript[this.currentDialogueIndex];
+        this.currentDialogueIndex++;
+
+        // Handle pause lines
+        if (line.character === null) {
+            this.dialogueTimer = setTimeout(() => this.playNextDialogue(), line.delay || 2000);
+            return;
+        }
+
+        // Find the character and make them speak
+        const character = this.characters.find(c => c.name === line.character);
+        if (character) {
+            character.showChat(line.message, 2500);
+        }
+
+        // Schedule next dialogue line
+        const delay = line.delay || 2500;
+        this.dialogueTimer = setTimeout(() => this.playNextDialogue(), delay);
+    }
+
+    /**
+     * Stop the dialogue system
+     */
+    stopDialogue() {
+        this.isDialogueRunning = false;
+        if (this.dialogueTimer) {
+            clearTimeout(this.dialogueTimer);
+            this.dialogueTimer = null;
+        }
     }
 
     initHouses() {
@@ -62,14 +151,24 @@ class HouseSlide extends BaseSlide {
     initCharacters() {
         this.characters = [];
         const scale = this.getScale();
-        const groundY = this.height - 150 * scale; // Slightly above bottom
+        let groundY = this.height - 150 * scale; // Slightly above bottom
         const size = 150 * scale;
 
-        // Add "Nhím - Mom" character
-        // Positioned slightly to the right of the house center
-        const x = this.width / 2 - 100 * scale;
+        // Load character images
+        if (!this.punImage) {
+            this.punImage = new Image();
+            this.punImage.src = 'assets/images/characters/chr_1.png';
+        }
+        if (!this.qnImage) {
+            this.qnImage = new Image();
+            this.qnImage.src = 'assets/images/characters/chr_5.png';
+        }
 
-        const momChar = new Character(x, groundY, size, this.momImage, "Nhím - Mom", [
+        // Add "Nhím - Mom" character
+        // Positioned slightly to the left of the house center
+        const momX = this.width / 2 - 100 * scale;
+
+        const momChar = new Character(momX, groundY, size, this.momImage, "NhímNhor", [
             "Chào bạn! 👋",
             "Hôm nay thật đẹp trời! ☀️",
             "Mình đang bận quá! 😅",
@@ -86,6 +185,26 @@ class HouseSlide extends BaseSlide {
             "Được rồi! 👍"
         ]);
         this.characters.push(momChar);
+
+        groundY += 100 * scale;
+
+        // Add "Pun" character - positioned to the right of the house
+        const punX = this.width / 2 + 70 * scale;
+        const punChar = new Character(punX, groundY, size, this.punImage, "Pun",
+            ["hi mum", "mum cho bé zô nhà nho", "ik mò", "nhà đẹp zạ", "hi qn iuu"],
+            [],
+            []
+        );
+        this.characters.push(punChar);
+
+        // Add "qn" character - positioned to the far right
+        const qnX = this.width / 2 + 150 * scale;
+        const qnChar = new Character(qnX, groundY, size, this.qnImage, "qn",
+            ["bé mún zô nhà", "iu pun", "mum cho bé vs pun zô nhà ik mò"],
+            [],
+            []
+        );
+        this.characters.push(qnChar);
     }
 
     /**
@@ -251,6 +370,7 @@ class HouseSlide extends BaseSlide {
 
     cleanup() {
         super.cleanup();
+        this.stopDialogue(); // Stop dialogue when leaving slide
         this.houses = [];
         this.characters = [];
         if (this.handleCanvasClick) {

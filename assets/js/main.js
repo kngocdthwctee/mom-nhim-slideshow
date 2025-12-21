@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
         christmasCountdown.start();
     }
 
-    console.log('Mom Nhím Slideshow loaded!');
+    console.log('Slideshow loaded!');
     console.log(`Total slides: ${window.slideManager.getSlideCount()}`);
 });
 

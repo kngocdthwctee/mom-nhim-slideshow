@@ -11,8 +11,8 @@ class Animal extends GameObject {
      * @param {boolean} flip - Whether to flip horizontally
      * @param {number} bobPhase - Phase offset for bobbing animation
      */
-    constructor(x, y, size, type, images, flip = false, bobPhase = 0) {
-        super(x, y, size, images[type]);
+    constructor(x, y, size, type, image, flip = false, bobPhase = 0, sound = null) {
+        super(x, y, size, image, sound);
         this.type = type;
         this.flip = flip;
         this.bobPhase = bobPhase;
@@ -43,6 +43,7 @@ class Animal extends GameObject {
      */
     onClick() {
         this.showChat(Animal.getRandomMessage(), 5000);
+        this.playSound();
     }
 
     /**

@@ -9,15 +9,31 @@ class GameObject {
      * @param {number} size - Object size
      * @param {Image} image - Object image (optional)
      */
-    constructor(x, y, size, image = null) {
+    constructor(x, y, size, image = null, sound = null) {
         this.x = x;
         this.y = y;
         this.size = size;
         this.image = image;
 
+        // Sound effect
+        this.sound = null;
+        if (sound) {
+            this.sound = new Audio(sound);
+        }
+
         // Chat bubble properties
         this.chatMessage = null;
         this.chatEndTime = 0;
+    }
+
+    /**
+     * Play object sound if available
+     */
+    playSound() {
+        if (this.sound) {
+            this.sound.currentTime = 0;
+            this.sound.play().catch(e => console.log("Audio play failed:", e));
+        }
     }
 
     /**

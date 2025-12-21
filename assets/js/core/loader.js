@@ -40,13 +40,24 @@
             'assets/images/fruits/quasaurieng.png',
 
             'assets/images/trees/candy-tree.png',
+
+            'assets/images/characters/santaclaus.png',
+            // Character images (chr_0.png to chr_131.png)
+            ...Array.from({ length: 132 }, (_, i) => `assets/images/characters/chr_${i}.png`)
         ],
         audio: [
             'assets/audio/gift-sound.mp3'
         ],
         sounds: [
             'assets/sounds/bee-landing-on-flower.mp3',
-            'assets/sounds/cow-mooing.mp3'
+            'assets/sounds/cow-mooing.mp3',
+            'assets/sounds/chicken-cluking.mp3',
+            'assets/sounds/pig.mp3',
+            'assets/sounds/ox_mooing.mp3',
+            'assets/sounds/santa-claus-merry-christmas.mp3'
+        ],
+        music: [
+            'assets/music/we-wish-you-a-merry-christmas.mp3'
         ]
     };
 
@@ -146,6 +157,11 @@
 
         // Load sounds
         resources.sounds.forEach(src => {
+            promises.push(loadAudio(src));
+        });
+
+        // Load music
+        resources.music.forEach(src => {
             promises.push(loadAudio(src));
         });
 

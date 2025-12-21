@@ -20,6 +20,13 @@ class ChristmasSlide extends BaseSlide {
         // Tree image
         this.treeImage = new Image();
 
+        // Santa Claus character
+        this.santaImage = new Image();
+        this.santa = null;
+
+        // Background music
+        this.bgMusic = null;
+
         // Disable camera panning for Christmas
         this.cameraEnabled = false;
         this.maxCameraOffset = 0;
@@ -31,8 +38,79 @@ class ChristmasSlide extends BaseSlide {
         // Load tree image
         this.treeImage.src = 'assets/images/trees/candy-tree.png';
 
+        // Load Santa Claus image and create character
+        this.santaImage.src = 'assets/images/characters/santaclaus.png';
+        this.initSantaClaus();
+
         this.initOrnaments();
         this.initLights();
+
+        // Add click handler for Santa Claus
+        this.handleCanvasClick = this.handleCanvasClick.bind(this);
+        canvas.addEventListener('click', this.handleCanvasClick);
+
+        // Play background music
+        this.playBackgroundMusic();
+    }
+
+    /**
+     * Initialize Santa Claus character with Christmas greetings
+     */
+    initSantaClaus() {
+        const santaMessages = [
+            "Ho ho ho! Giáng Sinh vui vẻ! 🎅🎄",
+            "Chúc cả nhà Giáng Sinh an lành, hạnh phúc! 🎁✨",
+            "Merry Christmas! Năm mới tràn đầy niềm vui! 🎄🎉",
+            "Quà Giáng Sinh đây! Ai ngoan được nhận nè! 🎁🎅",
+            "Ho ho ho! Tuyết rơi rồi, Giáng Sinh tới rồi! ❄️🎄",
+            "Chúc bạn có một mùa lễ hội ấm áp! 🎅❤️",
+            "Santa yêu tất cả các bạn! Ho ho ho! 🎅💖",
+            "Giáng Sinh là thời gian để yêu thương! ❤️🎄",
+            "Đêm Noel đẹp quá! Chúc mọi người hạnh phúc! 🌟✨",
+            "Ho ho ho! Cây thông đẹp quá nhỉ! 🎄🎅",
+            "Giáng Sinh này có quà cho cả nhà đó! 🎁🎉",
+            "Merry Christmas và Happy New Year! 🎄🎆"
+        ];
+
+        // Position Santa to the right of the tree
+        const santaX = this.width * 0.7;
+        const santaY = this.height * 0.88;
+        const santaSize = 180;
+
+        this.santa = new Character(
+            santaX,
+            santaY,
+            santaSize,
+            this.santaImage,
+            "Ông Già Noel",
+            santaMessages,
+            [], // giftMessages
+            [], // noGiftMessages
+            'assets/sounds/santa-claus-merry-christmas.mp3' // Sound when clicked
+        );
+    }
+
+    /**
+     * Play background Christmas music
+     */
+    playBackgroundMusic() {
+        if (!this.bgMusic) {
+            this.bgMusic = new Audio('assets/music/we-wish-you-a-merry-christmas.mp3');
+            this.bgMusic.loop = true;
+            this.bgMusic.volume = 0.5; // 50% volume
+        }
+        this.bgMusic.currentTime = 0;
+        this.bgMusic.play().catch(e => console.log("Background music play failed:", e));
+    }
+
+    /**
+     * Stop background music
+     */
+    stopBackgroundMusic() {
+        if (this.bgMusic) {
+            this.bgMusic.pause();
+            this.bgMusic.currentTime = 0;
+        }
     }
 
     initConfetti() {
@@ -83,6 +161,7 @@ class ChristmasSlide extends BaseSlide {
     onResize(width, height) {
         this.width = width;
         this.height = height;
+        this.initSantaClaus();
         this.initOrnaments();
         this.initLights();
         super.initSnowfall();
@@ -119,7 +198,33 @@ class ChristmasSlide extends BaseSlide {
 
         // Draw Christmas tree
         this.drawChristmasTree(ctx, timestamp, scale);
+
+        // Draw Santa Claus
+        if (this.santa) {
+            this.santa.render(ctx, scale, scrollOffset, this.width, timestamp);
+        }
+
         this.drawSnowfall(ctx, timestamp);
+    }
+
+    /**
+     * Handle canvas click to detect object clicks
+     * @param {MouseEvent} e - Mouse event
+     */
+    handleCanvasClick(e) {
+        const rect = this.canvas.getBoundingClientRect();
+        const x = (e.clientX - rect.left) * (this.canvas.width / rect.width) / window.devicePixelRatio;
+        const y = (e.clientY - rect.top) * (this.canvas.height / rect.height) / window.devicePixelRatio;
+
+        const scrollOffset = this.cameraX;
+
+        // Check if Santa was clicked
+        if (this.santa) {
+            const screenX = this.santa.getScreenX(scrollOffset, this.width);
+            if (screenX !== null && this.santa.isPointInside(x, y, screenX)) {
+                this.santa.onClick();
+            }
+        }
     }
 
     drawGround(ctx, scale) {
@@ -473,8 +578,16 @@ class ChristmasSlide extends BaseSlide {
 
     cleanup() {
         super.cleanup();
+        // Stop background music
+        this.stopBackgroundMusic();
+        this.bgMusic = null;
+
+        if (this.canvas && this.handleCanvasClick) {
+            this.canvas.removeEventListener('click', this.handleCanvasClick);
+        }
         this.ornaments = [];
         this.lightBulbs = [];
+        this.santa = null;
     }
 }
 
