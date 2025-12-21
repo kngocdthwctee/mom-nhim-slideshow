@@ -204,7 +204,119 @@ class ChristmasSlide extends BaseSlide {
             this.santa.render(ctx, scale, scrollOffset, this.width, timestamp);
         }
 
+        // Draw Merry Christmas text
+        this.drawMerryChristmasText(ctx, timestamp, scale);
+
         this.drawSnowfall(ctx, timestamp);
+    }
+
+    /**
+     * Draw animated "Merry Christmas" text with cute glow effect
+     */
+    drawMerryChristmasText(ctx, timestamp, scale) {
+        ctx.save();
+
+        // Multi-line text
+        const lines = [
+            "✨ Chúc mừng Giáng sinh ✨",
+            "💕 đến mọi người trong gia đình mình 💕"
+        ];
+
+        const x = this.width / 2;
+        const baseY = this.height * 0.20;
+
+        // Pulsing glow effect
+        const glowIntensity = (Math.sin(timestamp / 500) + 1) / 2;
+        const glowSize = 10 + glowIntensity * 8;
+
+        // Cute font - larger for first line
+        const fontSize1 = Math.min(36, this.width / 18) * scale;
+        const fontSize2 = Math.min(24, this.width / 25) * scale;
+        const lineHeight = fontSize1 * 1.6;
+
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        lines.forEach((line, index) => {
+            const fontSize = index === 0 ? fontSize1 : fontSize2;
+            const lineY = baseY + index * lineHeight;
+
+            // Use cute rounded font
+            ctx.font = `bold ${fontSize}px "Comic Sans MS", "Segoe UI", cursive, sans-serif`;
+
+            // Glow effect - pink for cute style
+            ctx.shadowColor = '#ff69b4';
+            ctx.shadowBlur = glowSize * scale;
+
+            // Outer glow (pink)
+            ctx.fillStyle = '#ff69b4';
+            ctx.fillText(line, x, lineY);
+
+            // Second layer glow (gold sparkle)
+            ctx.shadowColor = '#ffd700';
+            ctx.shadowBlur = (glowSize * 0.5) * scale;
+            ctx.fillText(line, x, lineY);
+
+            // Main text with gradient (white to light pink)
+            ctx.shadowBlur = 0;
+            const gradient = ctx.createLinearGradient(x - 200 * scale, lineY, x + 200 * scale, lineY);
+            gradient.addColorStop(0, '#fff');
+            gradient.addColorStop(0.3, '#fce7f3');
+            gradient.addColorStop(0.5, '#fff');
+            gradient.addColorStop(0.7, '#fce7f3');
+            gradient.addColorStop(1, '#fff');
+            ctx.fillStyle = gradient;
+            ctx.fillText(line, x, lineY);
+
+            // Cute outline (darker pink)
+            ctx.strokeStyle = '#db2777';
+            ctx.lineWidth = 1.5 * scale;
+            ctx.strokeText(line, x, lineY);
+        });
+
+        // Add sparkles around text
+        this.drawTextSparkles(ctx, x, baseY + lineHeight * 0.5, fontSize1, timestamp, scale);
+
+        ctx.restore();
+    }
+
+    /**
+     * Draw sparkles around the Merry Christmas text
+     */
+    drawTextSparkles(ctx, centerX, centerY, fontSize, timestamp, scale) {
+        const sparkleCount = 8;
+        const radius = fontSize * 1.5;
+
+        for (let i = 0; i < sparkleCount; i++) {
+            const angle = (i / sparkleCount) * Math.PI * 2 + timestamp / 1000;
+            const sparkleX = centerX + Math.cos(angle) * radius;
+            const sparkleY = centerY + Math.sin(angle) * (radius * 0.3);
+
+            // Twinkle effect
+            const twinkle = (Math.sin(timestamp / 200 + i * 0.5) + 1) / 2;
+            if (twinkle < 0.3) continue;
+
+            ctx.save();
+            ctx.globalAlpha = twinkle * 0.8;
+            ctx.translate(sparkleX, sparkleY);
+
+            // Draw star sparkle
+            const starSize = 4 * scale * twinkle;
+            ctx.beginPath();
+            ctx.moveTo(0, -starSize);
+            ctx.lineTo(starSize * 0.3, -starSize * 0.3);
+            ctx.lineTo(starSize, 0);
+            ctx.lineTo(starSize * 0.3, starSize * 0.3);
+            ctx.lineTo(0, starSize);
+            ctx.lineTo(-starSize * 0.3, starSize * 0.3);
+            ctx.lineTo(-starSize, 0);
+            ctx.lineTo(-starSize * 0.3, -starSize * 0.3);
+            ctx.closePath();
+            ctx.fillStyle = '#ffd700';
+            ctx.fill();
+
+            ctx.restore();
+        }
     }
 
     /**
