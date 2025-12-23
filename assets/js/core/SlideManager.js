@@ -8,8 +8,8 @@ class SlideManager {
         this.currentIndex = 0;
         this.canvasContainer = null;
         this.titleElement = null;
-        this.contentElement = null;
         this.nextButton = null;
+        this.prevButton = null;
         this.currentCanvas = null;
         this.animationId = null;
 
@@ -30,11 +30,12 @@ class SlideManager {
     init() {
         this.canvasContainer = document.getElementById('canvasContainer');
         this.titleElement = document.getElementById('slideTitle');
-        this.contentElement = document.getElementById('contentBox');
         this.nextButton = document.getElementById('nextBtn');
+        this.prevButton = document.getElementById('prevBtn');
 
-        // Bind event listener
+        // Bind event listeners
         this.nextButton.addEventListener('click', () => this.nextSlide());
+        this.prevButton.addEventListener('click', () => this.prevSlide());
 
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
@@ -213,9 +214,6 @@ class SlideManager {
         // Update title
         this.updateTitle(slide.title, this.currentIndex + 1, this.slides.length);
 
-        // Update content
-        this.updateContent(slide.content);
-
         // Update button text
         this.updateButton();
 
@@ -237,32 +235,29 @@ class SlideManager {
     }
 
     /**
-     * Update nội dung slide
-     */
-    updateContent(content) {
-        this.contentElement.innerHTML = content;
-        this.contentElement.classList.remove('fade-in');
-        void this.contentElement.offsetWidth;
-        this.contentElement.classList.add('fade-in');
-    }
-
-    /**
-     * Update button text
+     * Update button states
      */
     updateButton() {
+        const isFirstSlide = this.currentIndex === 0;
         const isLastSlide = this.currentIndex === this.slides.length - 1;
-        const btnText = this.nextButton.querySelector('.btn-text');
-        const btnIcon = this.nextButton.querySelector('.btn-icon');
 
-        const arrowRightSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
-        const replaySvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>`;
-
-        if (isLastSlide) {
-            btnText.textContent = 'Xem lại';
-            btnIcon.innerHTML = replaySvg;
+        // Handle prev button visibility
+        if (isFirstSlide) {
+            this.prevButton.classList.add('hidden');
         } else {
-            btnText.textContent = 'Tiếp theo';
-            btnIcon.innerHTML = arrowRightSvg;
+            this.prevButton.classList.remove('hidden');
+        }
+
+        // Handle next button icon (replay on last slide)
+        const nextSvg = this.nextButton.querySelector('svg');
+        if (isLastSlide) {
+            // Replay icon
+            nextSvg.innerHTML = '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>';
+            this.nextButton.title = 'Xem lại';
+        } else {
+            // Arrow right icon
+            nextSvg.innerHTML = '<path d="M5 12h14M12 5l7 7-7 7"/>';
+            this.nextButton.title = 'Tiếp theo';
         }
     }
 
@@ -274,9 +269,12 @@ class SlideManager {
         const canvas = document.createElement('canvas');
         canvas.id = `slide-canvas-${this.currentIndex}`;
 
-        // Clear container và thêm canvas mới
-        this.canvasContainer.innerHTML = '';
-        this.canvasContainer.appendChild(canvas);
+        // Remove old canvas only (keep navigation buttons)
+        if (this.currentCanvas) {
+            this.currentCanvas.remove();
+        }
+        // Prepend canvas (before navigation buttons)
+        this.canvasContainer.prepend(canvas);
         this.currentCanvas = canvas;
 
         // Set canvas size

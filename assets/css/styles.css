@@ -190,18 +190,11 @@ body {
    Content Layout - Responsive
    ============================ */
 .content-layout {
-    display: grid;
-    grid-template-columns: 1fr 320px;
+    display: flex;
+    flex-direction: column;
     gap: 24px;
     position: relative;
     z-index: 1;
-}
-
-@media (max-width: 900px) {
-    .content-layout {
-        grid-template-columns: 1fr;
-        gap: 16px;
-    }
 }
 
 @media (max-width: 480px) {
@@ -212,6 +205,67 @@ body {
 
     .slideshow-wrapper::before {
         font-size: 2.2rem;
+    }
+}
+
+/* Landscape Mobile - Scale to fit viewport */
+@media (max-height: 500px) and (orientation: landscape) {
+    .main-container {
+        padding: 8px;
+        min-height: 100vh;
+        align-items: flex-start;
+    }
+
+    .slideshow-wrapper {
+        padding: 10px;
+        border-radius: 16px;
+        max-height: calc(100vh - 16px);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .slideshow-wrapper::before {
+        display: none;
+        /* Hide bow in landscape */
+    }
+
+    .slide-title {
+        display: none;
+        /* Hide title to save space */
+    }
+
+    .content-layout {
+        gap: 0;
+        flex: 1;
+        min-height: 0;
+    }
+
+    .left-section {
+        gap: 0;
+        flex: 1;
+        min-height: 0;
+    }
+
+    .canvas-container {
+        flex: 1;
+        min-height: 0;
+        aspect-ratio: unset;
+        height: 100%;
+    }
+
+    .nav-btn {
+        width: 36px;
+        height: 36px;
+    }
+
+    .nav-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .slide-navigation {
+        padding: 6px;
     }
 }
 
@@ -299,185 +353,86 @@ body {
 }
 
 /* ============================
-   Right Section
+   Slide Navigation - Inside Canvas
    ============================ */
-.right-section {
+.slide-navigation {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     display: flex;
-    flex-direction: column;
-    gap: 16px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    pointer-events: none;
+    z-index: 10;
 }
 
-/* ============================
-   Content Box - Glassmorphism Card
-   ============================ */
-.content-box {
-    flex: 1;
+.nav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
     background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border-radius: 20px;
-    border: 1.5px solid rgba(251, 207, 232, 0.5);
-    padding: 22px;
-    color: var(--text-dark);
-    font-size: 1rem;
-    line-height: 1.85;
-    overflow-y: auto;
-    box-shadow:
-        0 4px 20px rgba(244, 114, 182, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.6);
-}
-
-.content-box::-webkit-scrollbar {
-    width: 8px;
-}
-
-.content-box::-webkit-scrollbar-track {
-    background: var(--pink-pale);
-    border-radius: 10px;
-}
-
-.content-box::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, var(--pink-light) 0%, var(--pink-main) 100%);
-    border-radius: 10px;
-    border: 2px solid var(--pink-pale);
-}
-
-.content-box::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, var(--pink-main) 0%, var(--pink-deep) 100%);
-}
-
-.content-box p {
-    margin-bottom: 14px;
-}
-
-.content-box p:last-child {
-    margin-bottom: 0;
-}
-
-.content-box .highlight {
-    color: var(--pink-deep);
-    font-weight: 700;
-    background: linear-gradient(120deg, transparent 0%, rgba(251, 207, 232, 0.5) 50%, transparent 100%);
-    padding: 2px 6px;
-    border-radius: 6px;
-}
-
-.content-box .character {
-    color: var(--red-bow);
-    font-weight: 600;
-    font-style: italic;
-}
-
-.content-box ul {
-    list-style: none;
-    margin: 12px 0;
-    padding-left: 10px;
-}
-
-.content-box ul li {
-    position: relative;
-    padding-left: 28px;
-    margin-bottom: 10px;
-}
-
-.content-box ul li::before {
-    content: '🌸';
-    position: absolute;
-    left: 0;
-    font-size: 0.9rem;
-}
-
-@media (max-width: 900px) {
-    .content-box {
-        max-height: 220px;
-    }
-}
-
-@media (max-width: 480px) {
-    .content-box {
-        padding: 16px;
-        font-size: 0.88rem;
-        max-height: 200px;
-        border-radius: 16px;
-    }
-}
-
-/* ============================
-   Next Button - Jelly / Kawaii Style
-   ============================ */
-.next-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    padding: 16px 28px;
-    background: var(--gradient-button);
-    border: none;
-    border-radius: 50px;
-    color: var(--white);
-    font-family: 'Quicksand', sans-serif;
-    font-size: 1.05rem;
-    font-weight: 700;
+    border: 2px solid rgba(251, 207, 232, 0.6);
+    border-radius: 50%;
+    color: var(--pink-main);
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     box-shadow:
-        0 6px 24px rgba(236, 72, 153, 0.35),
-        0 2px 6px rgba(236, 72, 153, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    position: relative;
-    overflow: hidden;
+        0 4px 16px rgba(244, 114, 182, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    pointer-events: auto;
 }
 
-.next-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
-    transition: left 0.5s ease;
+.nav-btn svg {
+    width: 24px;
+    height: 24px;
 }
 
-.next-btn:hover::before {
-    left: 100%;
-}
-
-.next-btn:hover {
-    transform: translateY(-4px) scale(1.03);
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: scale(1.1);
     box-shadow:
-        0 10px 32px rgba(236, 72, 153, 0.4),
-        0 4px 12px rgba(236, 72, 153, 0.25),
-        0 0 24px rgba(244, 114, 182, 0.3);
+        0 6px 24px rgba(244, 114, 182, 0.35),
+        0 0 20px rgba(244, 114, 182, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    color: var(--pink-deep);
 }
 
-.next-btn:active {
-    transform: translateY(-1px) scale(0.98);
+.nav-btn:active {
+    transform: scale(0.95);
     transition: all 0.1s ease;
 }
 
-.btn-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+.nav-btn:disabled,
+.nav-btn.hidden {
+    opacity: 0;
+    pointer-events: none;
 }
 
-.btn-icon svg {
-    width: 20px;
-    height: 20px;
-}
+@media (max-width: 600px) {
+    .slide-navigation {
+        padding: 8px;
+    }
 
-.next-btn:hover .btn-icon {
-    transform: translateX(6px);
-}
+    .nav-btn {
+        width: 40px;
+        height: 40px;
+    }
 
-@media (max-width: 480px) {
-    .next-btn {
-        padding: 14px 22px;
-        font-size: 0.95rem;
+    .nav-btn svg {
+        width: 20px;
+        height: 20px;
     }
 }
+
+
+
 
 /* ============================
    Animations
