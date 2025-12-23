@@ -6,13 +6,6 @@ class ChristmasSlide extends BaseSlide {
     constructor() {
         super();
         this.title = 'Lời chúc Giáng Sinh 🎄';
-        this.content = `
-            <p>Mom cười, nhìn thẳng camera, giọng vừa ấm vừa lầy:</p>
-            <p><span class="character">"Giáng Sinh tới rồi, Mom chúc cả nhà mình luôn vui vẻ, ăn no, ngủ kỹ, coi live không lag, ở đâu cũng ấm, trong nhà hay ngoài vườn cũng có tiếng cười."</span></p>
-            <p><span class="character">"Cảm ơn cả nhà đã luôn ở đây, Giáng Sinh này mình cùng nhau vui nha!"</span></p>
-            <p>Cả nhà trong live đồng thanh đáp lại. Gió lại thổi nhẹ. Cây lại rung rung.</p>
-            <p><span class="highlight">Giáng Sinh năm nay: hơi lạ, hơi huyền, nhưng vui hết nấc 🎄😆</span></p>
-        `;
 
         this.ornaments = [];
         this.lightBulbs = [];

@@ -7,14 +7,6 @@ class HouseSlide extends BaseSlide {
         super();
         console.log('HouseSlide initialized - Interactive House Version');
         this.title = 'Ngôi nhà của NhímNhor';
-        this.content = `
-            <p>Giáng Sinh tới, nhà <span class="highlight">NhímNhor</span> sáng rực như bật max đồ họa.</p>
-            <p>Đèn treo khắp nơi, trong nhà ấm áp, thơm mùi bánh.</p>
-            <p>Còn tụi nhỏ thì sao? Nhím cho ra <span class="highlight">ở ngoài trời</span> hết.</p>
-            <p>Nhím nói rất tỉnh: <span class="character">"Ra đây cho mát, cho khỏe, cho… quen gió quen sương."</span></p>
-            <p>Gió thổi cái vèo. Tụi nhỏ nhìn nhau:</p>
-            <p><span class="highlight">Ủa Giáng Sinh hay trại huấn luyện phiên bản huyền bí vậy Nhím?</span></p>
-        `;
 
         this.houses = [];
 

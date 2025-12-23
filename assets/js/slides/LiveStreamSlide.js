@@ -5,13 +5,6 @@ class LiveStreamSlide extends BaseSlide {
     constructor() {
         super();
         this.title = 'Livestream quen thuộc';
-        this.content = `
-            <p>Đến giờ livestream. Đèn bật lên, câu chào quen vang ra.</p>
-            <p>Phía sau, cây rung đúng nhịp. Gió thổi đúng đoạn cao trào.</p>
-            <p>Chuông gió leng keng đúng lúc… ai đó vừa kể xong câu chuyện.</p>
-            <p>Livestream vẫn rất bình thường.</p>
-            <p>Chỉ là <span class="highlight">khung cảnh phía sau nhìn hơi… có hồn.</span></p>
-        `;
         this.comments = [];
         this.giftVideo = null;
         this.slideStartTime = 0;

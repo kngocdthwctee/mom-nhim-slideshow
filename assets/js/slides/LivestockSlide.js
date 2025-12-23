@@ -7,14 +7,6 @@ class LivestockSlide extends BaseSlide {
         super();
         console.log('LivestockSlide initialized - Livestock Pen Version');
         this.title = 'Khu sinh hoạt chung';
-        this.content = `
-            <p>Khu sinh hoạt chung ngoài trời, nhìn thì chill mà ở thì… <span class="highlight">hơi rờn rợn xíu</span>.</p>
-            <p>Gió thổi qua tai nghe như ai đó gọi tên. Quay lại thì chỉ thấy… cái áo treo bị gió lật.</p>
-            <p>Không ai hoảng. Chỉ có tiếng cười:</p>
-            <p><span class="character">"Ở đây chắc có hiệu ứng âm thanh Giáng Sinh bản đặc biệt."</span></p>
-            <p>Mom vẫn rất bình thản: <span class="character">"Yên tâm, để Mom từ từ cải tạo."</span></p>
-            <p>Nghe xong, tụi nhỏ… <span class="highlight">càng hồi hộp hơn</span>.</p>
-        `;
 
         // Enable camera panning
         this.cameraEnabled = true;

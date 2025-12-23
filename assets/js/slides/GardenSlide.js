@@ -8,14 +8,6 @@ class GardenSlide extends BaseSlide {
         super();
         console.log('GardenSlide initialized - New Trees Version');
         this.title = 'Khu vườn huyền bí';
-        this.content = `
-            <p>Sau nhà là khu vườn nhìn cái là thấy… <span class="highlight">không bình thường</span>.</p>
-            <p>Cây mít lúc nào cũng rung rung, trái lắc lư như đang tám chuyện.</p>
-            <p>Cây xoài đung đưa, lá va vào nhau nghe như cười khúc khích.</p>
-            <p>Cây ổi thì im im, nhưng gió thổi qua là lá xào xạc y như đang thì thầm.</p>
-            <p>Hoa quả sai trĩu, tụi nhỏ tự hái, tự ăn, tự chăm.</p>
-            <p>Có lúc quả rung nhẹ… <span class="highlight">không biết do gió hay do cây coi livestream nhiều quá.</span></p>
-        `;
 
         // Enable camera panning
         this.cameraEnabled = true;
