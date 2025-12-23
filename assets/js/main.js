@@ -80,6 +80,11 @@ function initFullscreen() {
     // Auto-suggest fullscreen on landscape mobile
     let hasPrompted = false;
     window.addEventListener('orientationchange', () => {
+        // Always resize canvas on orientation change
+        setTimeout(() => {
+            window.slideManager.resizeCanvas();
+        }, 100);
+
         const isLandscape = window.matchMedia('(orientation: landscape)').matches;
         const isMobile = window.innerWidth <= 900;
 
@@ -92,6 +97,15 @@ function initFullscreen() {
                 }
             }, 500);
         }
+    });
+
+    // Also resize on window resize (debounced)
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            window.slideManager.resizeCanvas();
+        }, 100);
     });
 }
 
