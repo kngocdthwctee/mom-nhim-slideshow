@@ -369,6 +369,56 @@ body {
     z-index: 10;
 }
 
+/* Fullscreen button - positioned at top right */
+.nav-fullscreen {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    left: auto;
+    bottom: auto;
+    transform: none;
+}
+
+/* Fullscreen mode styles */
+.slideshow-wrapper.is-fullscreen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    z-index: 9999 !important;
+}
+
+.slideshow-wrapper.is-fullscreen .content-layout {
+    height: 100vh;
+}
+
+.slideshow-wrapper.is-fullscreen .left-section {
+    height: 100%;
+}
+
+.slideshow-wrapper.is-fullscreen .slide-title {
+    display: none;
+}
+
+.slideshow-wrapper.is-fullscreen .canvas-container {
+    height: 100vh;
+    aspect-ratio: unset;
+    border-radius: 0;
+}
+
+.slideshow-wrapper.is-fullscreen::before,
+.slideshow-wrapper.is-fullscreen::after {
+    display: none;
+}
+
 .nav-btn {
     display: flex;
     align-items: center;
