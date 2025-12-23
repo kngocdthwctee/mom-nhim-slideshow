@@ -75,7 +75,10 @@ class ChristmasSlide extends BaseSlide {
         // Position Santa to the right of the tree
         const santaX = this.width * 0.7;
         const santaY = this.height * 0.88;
-        const santaSize = 180;
+
+
+        const scale = this.getScale();
+        const santaSize = 180 * scale;
 
         this.santa = new Character(
             santaX,
