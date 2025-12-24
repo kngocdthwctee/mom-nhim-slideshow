@@ -558,5 +558,6 @@ BaseSlide.CHARACTERS = [
     { id: 82, name: "Đạica", messages: ["Chào mày"], avatar: 82 },
     { id: 83, name: "Star", messages: ["hẹn gặp lại mùa hoa nở"], avatar: 104 },
     { id: 84, name: "ĐLuận", messages: ["tui fl hết"], avatar: 84 },
-    { id: 85, name: "bé7", messages: ["biết t là ai khong"], avatar: 0 }
+    { id: 85, name: "bé7", messages: ["biết t là ai khong"], avatar: 0 },
+    { id: 86, name: "vong", messages: ["vong nè"], avatar: 105 }
 ];
