@@ -1,6 +1,7 @@
 /**
  * BaseSlide - Base class for all slides
  * Contains common functionality like sky, ground, fence, and camera controls
+ * Supports 2D camera panning (X, Y) and zoom in/out
  */
 class BaseSlide {
     constructor() {
@@ -9,16 +10,35 @@ class BaseSlide {
         this.width = 0;
         this.height = 0;
 
-        // Camera control
+        // Camera control - 2D panning + zoom
         this.cameraEnabled = true; // Default: camera enabled
         this.cameraX = 0;
+        this.cameraY = 0;
+        this.zoom = 1.0; // 1.0 = 100%, 0.5 = 50%, 2.0 = 200%
+        this.minZoom = 0.5;
+        this.maxZoom = 3.0;
+        this.zoomSpeed = 0.1; // Zoom sensitivity
+
+        // Camera limits (to be set by child slides)
+        this.maxCameraOffsetX = 0;
+        this.maxCameraOffsetY = 0;
+        // Legacy support: maxCameraOffset maps to X
+        this.maxCameraOffset = 0;
+
+        // Drag state
         this.isDragging = false;
         this.lastMouseX = 0;
+        this.lastMouseY = 0;
+
+        // Pinch zoom state
+        this.initialPinchDistance = 0;
+        this.initialZoom = 1.0;
 
         // Bind events
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onMouseUp = this.onMouseUp.bind(this);
+        this.onWheel = this.onWheel.bind(this);
         this.onTouchStart = this.onTouchStart.bind(this);
         this.onTouchMove = this.onTouchMove.bind(this);
         this.onTouchEnd = this.onTouchEnd.bind(this);
@@ -41,6 +61,7 @@ class BaseSlide {
             canvas.addEventListener('mousedown', this.onMouseDown);
             window.addEventListener('mousemove', this.onMouseMove);
             window.addEventListener('mouseup', this.onMouseUp);
+            canvas.addEventListener('wheel', this.onWheel, { passive: false });
 
             canvas.addEventListener('touchstart', this.onTouchStart, { passive: false });
             window.addEventListener('touchmove', this.onTouchMove, { passive: false });
@@ -48,42 +69,190 @@ class BaseSlide {
         }
     }
 
-    // Input Handling
+    // Input Handling - Mouse
     onMouseDown(e) {
         this.isDragging = true;
         this.lastMouseX = e.clientX;
+        this.lastMouseY = e.clientY;
     }
 
     onMouseMove(e) {
         if (!this.isDragging) return;
-        const delta = (e.clientX - this.lastMouseX);
-        this.cameraX -= delta;
+        const deltaX = (e.clientX - this.lastMouseX);
+        const deltaY = (e.clientY - this.lastMouseY);
+
+        // Apply inverse zoom factor for consistent panning speed
+        const zoomFactor = 1 / this.zoom;
+        this.cameraX -= deltaX * zoomFactor;
+        this.cameraY -= deltaY * zoomFactor;
+
         this.lastMouseX = e.clientX;
+        this.lastMouseY = e.clientY;
+
+        this.clampCamera();
     }
 
     onMouseUp() {
         this.isDragging = false;
     }
 
+    // Mouse wheel zoom
+    onWheel(e) {
+        e.preventDefault();
+
+        // Normalize wheel delta across browsers
+        const delta = -Math.sign(e.deltaY);
+        const zoomChange = delta * this.zoomSpeed;
+
+        // Calculate new zoom centered on mouse position
+        const rect = this.canvas.getBoundingClientRect();
+        const mouseX = (e.clientX - rect.left) * (this.canvas.width / rect.width) / window.devicePixelRatio;
+        const mouseY = (e.clientY - rect.top) * (this.canvas.height / rect.height) / window.devicePixelRatio;
+
+        const oldZoom = this.zoom;
+        this.zoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.zoom + zoomChange));
+
+        // Adjust camera position to zoom toward mouse cursor
+        if (oldZoom !== this.zoom) {
+            const zoomRatio = this.zoom / oldZoom;
+            const worldMouseX = mouseX / oldZoom + this.cameraX;
+            const worldMouseY = mouseY / oldZoom + this.cameraY;
+
+            this.cameraX = worldMouseX - mouseX / this.zoom;
+            this.cameraY = worldMouseY - mouseY / this.zoom;
+
+            this.clampCamera();
+        }
+    }
+
+    // Touch handling - pinch to zoom + pan
     onTouchStart(e) {
-        if (e.touches.length > 0) {
+        if (e.touches.length === 1) {
+            // Single touch - start panning
             this.isDragging = true;
             this.lastMouseX = e.touches[0].clientX;
+            this.lastMouseY = e.touches[0].clientY;
+        } else if (e.touches.length === 2) {
+            // Two fingers - start pinch zoom
+            e.preventDefault();
+            this.isDragging = false;
+            this.initialPinchDistance = this.getPinchDistance(e.touches);
+            this.initialZoom = this.zoom;
         }
     }
 
     onTouchMove(e) {
-        if (!this.isDragging) return;
-        if (e.touches.length > 0) {
+        if (e.touches.length === 1 && this.isDragging) {
+            // Single touch - panning
             e.preventDefault();
-            const delta = (e.touches[0].clientX - this.lastMouseX);
-            this.cameraX -= delta;
+            const deltaX = (e.touches[0].clientX - this.lastMouseX);
+            const deltaY = (e.touches[0].clientY - this.lastMouseY);
+
+            const zoomFactor = 1 / this.zoom;
+            this.cameraX -= deltaX * zoomFactor;
+            this.cameraY -= deltaY * zoomFactor;
+
             this.lastMouseX = e.touches[0].clientX;
+            this.lastMouseY = e.touches[0].clientY;
+
+            this.clampCamera();
+        } else if (e.touches.length === 2) {
+            // Pinch zoom
+            e.preventDefault();
+            const currentDistance = this.getPinchDistance(e.touches);
+            const scale = currentDistance / this.initialPinchDistance;
+
+            // Calculate pinch center
+            const centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+            const centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+
+            const rect = this.canvas.getBoundingClientRect();
+            const pinchX = (centerX - rect.left) * (this.canvas.width / rect.width) / window.devicePixelRatio;
+            const pinchY = (centerY - rect.top) * (this.canvas.height / rect.height) / window.devicePixelRatio;
+
+            const oldZoom = this.zoom;
+            this.zoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.initialZoom * scale));
+
+            // Adjust camera to zoom toward pinch center
+            if (oldZoom !== this.zoom) {
+                const zoomRatio = this.zoom / oldZoom;
+                const worldPinchX = pinchX / oldZoom + this.cameraX;
+                const worldPinchY = pinchY / oldZoom + this.cameraY;
+
+                this.cameraX = worldPinchX - pinchX / this.zoom;
+                this.cameraY = worldPinchY - pinchY / this.zoom;
+
+                this.clampCamera();
+            }
         }
     }
 
-    onTouchEnd() {
-        this.isDragging = false;
+    onTouchEnd(e) {
+        if (e.touches.length === 0) {
+            this.isDragging = false;
+        } else if (e.touches.length === 1) {
+            // One finger remaining - reset to panning mode
+            this.isDragging = true;
+            this.lastMouseX = e.touches[0].clientX;
+            this.lastMouseY = e.touches[0].clientY;
+        }
+    }
+
+    /**
+     * Calculate distance between two touch points for pinch gesture
+     */
+    getPinchDistance(touches) {
+        const dx = touches[0].clientX - touches[1].clientX;
+        const dy = touches[0].clientY - touches[1].clientY;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    /**
+     * Clamp camera position within allowed bounds
+     */
+    clampCamera() {
+        // Use legacy maxCameraOffset for X if maxCameraOffsetX not set
+        const maxX = this.maxCameraOffsetX || this.maxCameraOffset || 0;
+        const maxY = this.maxCameraOffsetY || 0;
+
+        // Adjust limits based on zoom level
+        const zoomAdjustedMaxX = maxX / this.zoom;
+        const zoomAdjustedMaxY = maxY / this.zoom;
+
+        this.cameraX = Math.max(-zoomAdjustedMaxX, Math.min(zoomAdjustedMaxX, this.cameraX));
+        this.cameraY = Math.max(-zoomAdjustedMaxY, Math.min(zoomAdjustedMaxY, this.cameraY));
+    }
+
+    /**
+     * Reset camera to default position and zoom
+     */
+    resetCamera() {
+        this.cameraX = 0;
+        this.cameraY = 0;
+        this.zoom = 1.0;
+    }
+
+    /**
+     * Apply camera transform to context
+     * Call this at the start of render after ctx.save()
+     */
+    applyCameraTransform(ctx) {
+        // Scale for DPI
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+        // Apply zoom and pan
+        ctx.translate(this.width / 2, this.height / 2);
+        ctx.scale(this.zoom, this.zoom);
+        ctx.translate(-this.width / 2 - this.cameraX, -this.height / 2 - this.cameraY);
+    }
+
+    /**
+     * Get scroll offset for legacy compatibility (used by objects)
+     * Combines cameraX with any additional offset
+     */
+    getScrollOffset() {
+        return this.cameraX;
     }
 
     drawBackground(ctx, timestamp) {
@@ -233,11 +402,15 @@ class BaseSlide {
         if (this.canvas) {
             this.canvas.removeEventListener('mousedown', this.onMouseDown);
             this.canvas.removeEventListener('touchstart', this.onTouchStart);
+            this.canvas.removeEventListener('wheel', this.onWheel);
         }
         window.removeEventListener('mousemove', this.onMouseMove);
         window.removeEventListener('mouseup', this.onMouseUp);
         window.removeEventListener('touchmove', this.onTouchMove);
         window.removeEventListener('touchend', this.onTouchEnd);
+
+        // Reset camera state
+        this.resetCamera();
     }
 
     // Methods to be overridden by child classes
