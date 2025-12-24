@@ -192,7 +192,7 @@ class LiveStreamSlide extends BaseSlide {
         if (this.slideStartTime === 0) this.slideStartTime = timestamp;
 
         const elapsed = timestamp - this.slideStartTime;
-        if (elapsed > 130000 && !this.giftEffectTriggered) {
+        if (elapsed > 20000 && !this.giftEffectTriggered) {
             this.giftEffectTriggered = true;
             this.showGiftEffect = true;
             this.giftViewerBoost = true;
