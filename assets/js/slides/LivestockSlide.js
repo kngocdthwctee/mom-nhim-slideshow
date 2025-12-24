@@ -82,10 +82,8 @@ class LivestockSlide extends BaseSlide {
         this.animals = [];
         const scale = this.getScale();
 
-        // Set camera limits (Expanded map size with Y panning and zoom)
-        this.maxCameraOffset = 2500 * scale;
-        this.maxCameraOffsetX = 2500 * scale;
-        this.maxCameraOffsetY = 300 * scale;
+        // Set camera limits (Expanded map size)
+        this.maxCameraOffset = 2500 * scale; // Increased from 400 to 2500
 
         const groundY = this.height - 100 * scale;
 
@@ -215,14 +213,16 @@ class LivestockSlide extends BaseSlide {
         const ctx = this.ctx;
         const scale = this.getScale();
 
-        // Apply camera limits (using clampCamera from BaseSlide)
-        this.clampCamera();
+        // Apply camera limits
+        if (this.cameraX < -this.maxCameraOffset) this.cameraX = -this.maxCameraOffset;
+        if (this.cameraX > this.maxCameraOffset) this.cameraX = this.maxCameraOffset;
 
         const scrollOffset = this.cameraX;
 
-        // Apply camera transform (handles DPI, zoom, and pan)
+        // Apply global scale
         ctx.save();
-        this.applyCameraTransform(ctx);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
 
         this.drawBackground(ctx);
         this.drawGround(ctx, scale);

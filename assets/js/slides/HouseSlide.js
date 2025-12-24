@@ -136,10 +136,8 @@ class HouseSlide extends BaseSlide {
         const house = new House(this.width / 2, groundY, size, this.houseImage, this.characters[0]);
         this.houses.push(house);
 
-        // Set camera limits (can pan left/right and up/down a bit)
+        // Set camera limits (can pan left/right a bit)
         this.maxCameraOffset = 300 * scale;
-        this.maxCameraOffsetX = 300 * scale;
-        this.maxCameraOffsetY = 200 * scale;
     }
 
     initCharacters() {
@@ -236,14 +234,16 @@ class HouseSlide extends BaseSlide {
         const ctx = this.ctx;
         const scale = this.getScale();
 
-        // Apply camera limits (using clampCamera from BaseSlide)
-        this.clampCamera();
+        // Camera control with limits
+        if (this.cameraX < -this.maxCameraOffset) this.cameraX = -this.maxCameraOffset;
+        if (this.cameraX > this.maxCameraOffset) this.cameraX = this.maxCameraOffset;
 
         const scrollOffset = this.cameraX;
 
-        // Apply camera transform (handles DPI, zoom, and pan)
+        // Apply global scale
         ctx.save();
-        this.applyCameraTransform(ctx);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
 
         this.drawBackground(ctx, timestamp);
         this.drawGround(ctx, scale);

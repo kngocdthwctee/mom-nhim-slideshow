@@ -170,12 +170,13 @@ class ChristmasSlide extends BaseSlide {
         // Calculate scale factor
         const scale = this.getScale();
 
-        // Apply camera limits (camera is disabled for this slide)
-        this.clampCamera();
+        // Camera control with limits
+        if (this.cameraX < -this.maxCameraOffset) this.cameraX = -this.maxCameraOffset;
+        if (this.cameraX > this.maxCameraOffset) this.cameraX = this.maxCameraOffset;
 
         const scrollOffset = this.cameraX;
 
-        // Apply global scale (no camera transform for this slide since cameraEnabled = false)
+        // Apply global scale
         ctx.save();
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
